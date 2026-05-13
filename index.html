@@ -9,18 +9,11 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #0c0c0e;
-    --surface: #141416;
-    --surface2: #1c1c1f;
-    --border: #2a2a2e;
-    --accent: #e8c547;
-    --accent2: #f0a500;
-    --text: #f0ede8;
-    --muted: #6b6870;
-    --watched: #1e2e1e;
-    --watched-border: #2e4e2e;
-    --danger: #c0392b;
-    --radius: 10px;
+    --bg: #0c0c0e; --surface: #141416; --surface2: #1c1c1f;
+    --border: #2a2a2e; --accent: #e8c547; --accent2: #f0a500;
+    --text: #f0ede8; --muted: #6b6870;
+    --watched: #1e2e1e; --watched-border: #2e4e2e;
+    --danger: #c0392b; --radius: 10px;
   }
 
   html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; overflow-x: hidden; }
@@ -28,20 +21,17 @@
   /* ── HEADER ── */
   header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 24px; border-bottom: 1px solid var(--border);
-    background: var(--bg); position: sticky; top: 0; z-index: 100;
-    height: 54px;
+    padding: 0 24px; border-bottom: 1px solid var(--border);
+    background: var(--bg); position: sticky; top: 0; z-index: 100; height: 54px;
   }
   .logo { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
   .logo span { color: var(--accent); }
   .header-center { display: flex; align-items: center; gap: 16px; font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
   .header-center b { color: var(--accent); font-weight: 500; }
-  .header-right { display: flex; align-items: center; gap: 10px; }
   .goal-badge {
     background: transparent; border: 1px solid var(--border);
     padding: 5px 12px; border-radius: 50px; font-size: 11px;
-    font-family: 'DM Mono', monospace; cursor: pointer;
-    color: var(--muted); transition: all .2s;
+    font-family: 'DM Mono', monospace; cursor: pointer; color: var(--muted); transition: all .2s;
   }
   .goal-badge:hover { border-color: var(--accent); color: var(--accent); }
   .goal-badge.goal-met { border-color: #3a6b3a; color: #6abf6a; }
@@ -50,63 +40,41 @@
   .app { display: grid; grid-template-columns: 1fr 360px; height: calc(100vh - 54px); overflow: hidden; }
 
   /* ── PLAYER SIDE ── */
-  .player-side {
-    display: flex; flex-direction: column;
-    border-right: 1px solid var(--border); overflow: hidden;
-  }
+  .player-side { display: flex; flex-direction: column; border-right: 1px solid var(--border); overflow: hidden; }
 
-  .player-wrap {
-    position: relative; background: #000; flex-shrink: 0;
-    aspect-ratio: 16/9; width: 100%;
-  }
+  .player-wrap { position: relative; background: #000; flex-shrink: 0; aspect-ratio: 16/9; width: 100%; }
   .player-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
 
   .empty-player {
     width: 100%; height: 100%; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 12px;
-    background: var(--surface);
+    align-items: center; justify-content: center; gap: 12px; background: var(--surface);
   }
   .empty-player .icon { font-size: 44px; opacity: .2; }
-  .empty-player p {
-    font-family: 'Instrument Serif', serif; font-style: italic;
-    font-size: 17px; color: var(--muted); text-align: center; line-height: 1.5;
-  }
+  .empty-player p { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 17px; color: var(--muted); text-align: center; line-height: 1.5; }
 
   /* ── VIDEO INFO ── */
-  .video-info {
-    padding: 12px 20px; border-bottom: 1px solid var(--border);
-    background: var(--surface); flex-shrink: 0;
-  }
+  .video-info { padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--surface); flex-shrink: 0; }
   .video-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; line-height: 1.4; }
   .video-meta { display: flex; align-items: center; gap: 12px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
 
   /* ── PROGRESS ── */
-  .progress-section {
-    padding: 12px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0;
-  }
+  .progress-section { padding: 12px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
   .progress-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
   .progress-label span { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted); letter-spacing: .06em; }
   .progress-label strong { font-size: 12px; color: var(--accent); font-family: 'DM Mono', monospace; }
   .progress-track { height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
   .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); border-radius: 3px; transition: width .5s cubic-bezier(.4,0,.2,1); }
   .progress-steps { display: flex; gap: 3px; margin-top: 7px; flex-wrap: wrap; }
-  .step-dot {
-    width: 16px; height: 3px; border-radius: 2px; background: var(--surface2);
-    transition: background .3s; cursor: pointer;
-  }
+  .step-dot { width: 16px; height: 3px; border-radius: 2px; background: var(--surface2); transition: background .3s; cursor: pointer; }
   .step-dot.done { background: var(--accent); }
   .step-dot.active { background: var(--accent2); opacity: .7; }
 
   /* ── PLAYER CONTROLS ── */
-  .player-controls {
-    display: flex; align-items: center; gap: 8px;
-    padding: 12px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0;
-  }
+  .player-controls { display: flex; align-items: center; gap: 8px; padding: 12px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
   .btn {
     display: flex; align-items: center; gap: 6px; padding: 8px 16px;
     border-radius: var(--radius); font-family: 'Syne', sans-serif; font-size: 12px;
-    font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: all .15s;
-    white-space: nowrap;
+    font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: all .15s; white-space: nowrap;
   }
   .btn-primary { background: var(--accent); color: #0c0c0e; border-color: var(--accent); }
   .btn-primary:hover { background: var(--accent2); }
@@ -115,33 +83,195 @@
   .btn:disabled { opacity: .3; cursor: not-allowed; }
   .btn-skip { margin-left: auto; font-size: 11px; padding: 8px 12px; }
 
-  /* ── SECTION LABEL (shared) ── */
-  .section-label {
-    font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted);
-    letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px; flex-shrink: 0;
+  /* ── QUEUE SIDE ── */
+  .queue-side { display: flex; flex-direction: column; overflow: hidden; background: var(--surface); }
+
+  /* ── PLAYLIST SELECTOR BAR ── */
+  .pl-bar {
+    display: flex; align-items: center; gap: 0;
+    border-bottom: 1px solid var(--border); flex-shrink: 0;
+    background: var(--bg); height: 40px; padding: 0 6px 0 14px;
+    position: relative;
   }
+  .pl-current-btn {
+    flex: 1; display: flex; align-items: center; gap: 6px; background: none;
+    border: none; cursor: pointer; padding: 4px 6px; border-radius: 6px;
+    font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
+    color: var(--text); transition: background .15s; min-width: 0;
+    text-align: left;
+  }
+  .pl-current-btn:hover { background: var(--surface2); }
+  .pl-current-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+  .pl-arrow { font-size: 10px; color: var(--muted); flex-shrink: 0; transition: transform .2s; }
+  .pl-arrow.open { transform: rotate(180deg); }
+  .pl-new-btn {
+    flex-shrink: 0; background: none; border: 1px solid var(--border);
+    border-radius: 6px; padding: 4px 10px; font-family: 'Syne', sans-serif;
+    font-size: 11px; font-weight: 700; color: var(--muted); cursor: pointer;
+    transition: all .15s;
+  }
+  .pl-new-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── PLAYLIST DROPDOWN ── */
+  .pl-dropdown {
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--surface); border: 1px solid var(--border);
+    border-top: none; z-index: 50; max-height: 0; overflow: hidden;
+    transition: max-height .22s cubic-bezier(.4,0,.2,1);
+  }
+  .pl-dropdown.open { max-height: 260px; overflow-y: auto; }
+  .pl-dropdown::-webkit-scrollbar { width: 3px; }
+  .pl-dropdown::-webkit-scrollbar-thumb { background: var(--border); }
+  .pl-item {
+    display: flex; align-items: center; gap: 8px; padding: 9px 14px;
+    cursor: pointer; transition: background .1s; border-bottom: 1px solid var(--border);
+  }
+  .pl-item:last-child { border-bottom: none; }
+  .pl-item:hover { background: var(--surface2); }
+  .pl-item.active-pl { background: #1e1b0e; }
+  .pl-item-name { flex: 1; font-size: 12px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pl-item-count { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); flex-shrink: 0; }
+  .pl-item-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .pl-icon-btn {
+    background: none; border: none; cursor: pointer; padding: 3px 5px;
+    border-radius: 4px; font-size: 12px; color: var(--muted); transition: all .15s; line-height: 1;
+  }
+  .pl-icon-btn:hover { color: var(--accent); background: var(--surface2); }
+  .pl-icon-btn.del:hover { color: var(--danger); background: rgba(192,57,43,.1); }
+  .pl-active-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .pl-inactive-dot { width: 6px; height: 6px; flex-shrink: 0; }
+
+  /* ── PANEL TABS ── */
+  .panel-tabs {
+    display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    padding: 0 10px; gap: 0; position: relative;
+  }
+  .panel-tab {
+    padding: 11px 12px; font-size: 11px; font-weight: 700; font-family: 'Syne', sans-serif;
+    color: var(--muted); background: none; border: none; cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s; letter-spacing: .04em;
+  }
+  .panel-tab:hover { color: var(--text); }
+  .panel-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-count {
+    display: inline-block; background: var(--surface2); border-radius: 50px;
+    padding: 1px 5px; font-size: 10px; font-family: 'DM Mono', monospace;
+    color: var(--muted); margin-left: 4px; vertical-align: middle;
+  }
+  .add-trigger {
+    margin-left: auto; align-self: center; width: 28px; height: 28px; border-radius: 8px;
+    background: var(--accent); color: #0c0c0e; border: none; font-size: 18px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    line-height: 1; transition: all .15s; flex-shrink: 0;
+  }
+  .add-trigger:hover { background: var(--accent2); transform: scale(1.05); }
+  .add-trigger.open { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); font-size: 14px; }
+
+  /* ── INLINE ADD ROW ── */
+  .add-row-wrap {
+    max-height: 0; overflow: hidden;
+    transition: max-height .25s cubic-bezier(.4,0,.2,1);
+    border-bottom: 0px solid var(--border); flex-shrink: 0;
+  }
+  .add-row-wrap.open { max-height: 60px; border-bottom: 1px solid var(--border); }
+  .add-row { display: flex; align-items: center; gap: 8px; padding: 10px 12px; }
+  .url-input {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 8px 11px; font-family: 'DM Mono', monospace;
+    font-size: 11px; color: var(--text); outline: none; transition: border-color .2s;
+  }
+  .url-input:focus { border-color: var(--accent); }
+  .url-input::placeholder { color: var(--muted); }
+  .add-confirm {
+    background: var(--accent); color: #0c0c0e; border: none; border-radius: var(--radius);
+    padding: 8px 12px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+    cursor: pointer; transition: background .15s; white-space: nowrap; flex-shrink: 0;
+  }
+  .add-confirm:hover { background: var(--accent2); }
+
+  /* ── PANEL VIEWS ── */
+  .panel-view { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+  .panel-view.active { display: flex; }
+
+  /* ── QUEUE HEADER ── */
+  .queue-header-bar { padding: 8px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .queue-header-top { display: flex; align-items: center; gap: 6px; }
+  .queue-label { font-size: 12px; font-weight: 700; color: var(--text); flex: 1; }
+  .queue-count { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+  .queue-time-left { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+
+  .icon-btn {
+    background: none; border: none; cursor: pointer; padding: 4px 6px; border-radius: 5px;
+    font-size: 13px; color: var(--muted); transition: all .15s; line-height: 1; flex-shrink: 0;
+  }
+  .icon-btn:hover { color: var(--accent); background: var(--surface2); }
+  .icon-btn.active-filter { color: var(--accent); }
+  .clear-btn { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted); background: none; border: none; cursor: pointer; padding: 3px 6px; border-radius: 5px; transition: all .15s; white-space: nowrap; }
+  .clear-btn:hover { color: var(--danger); }
+
+  /* search row */
+  .search-row { margin-top: 7px; display: none; }
+  .search-row.open { display: block; }
+  .search-input {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 7px 11px; font-family: 'DM Mono', monospace;
+    font-size: 11px; color: var(--text); outline: none; transition: border-color .2s;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .search-input::placeholder { color: var(--muted); }
+
+  /* ── PLAYLIST ── */
+  .playlist { flex: 1; overflow-y: auto; padding: 6px; }
+  .playlist::-webkit-scrollbar { width: 3px; }
+  .playlist::-webkit-scrollbar-track { background: transparent; }
+  .playlist::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .empty-queue { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 8px; padding: 20px; }
+  .empty-queue p { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 15px; color: var(--muted); text-align: center; line-height: 1.6; }
+
+  .queue-item {
+    display: flex; align-items: center; gap: 8px; padding: 8px;
+    border-radius: var(--radius); cursor: pointer; transition: all .15s;
+    border: 1px solid transparent; margin-bottom: 3px;
+  }
+  .queue-item:hover { background: var(--surface2); border-color: var(--border); }
+  .queue-item.active { background: #1e1b0e; border-color: var(--accent); }
+  .queue-item.watched { background: var(--watched); border-color: var(--watched-border); }
+  .queue-item.watched .item-title { color: var(--muted); text-decoration: line-through; }
+
+  .item-thumb { width: 72px; height: 40px; border-radius: 5px; object-fit: cover; flex-shrink: 0; background: var(--surface2); }
+  .item-body { flex: 1; min-width: 0; }
+  .item-title { font-size: 11px; font-weight: 600; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .item-meta { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+  .item-badge { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+  .item-badge.done-badge { color: #6abf6a; }
+  .item-duration { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+  .item-duration::before { content: '·'; margin-right: 6px; }
+  .item-actions { display: flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0; }
+  .item-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 12px; padding: 2px 4px; border-radius: 4px; transition: all .15s; line-height: 1; }
+  .item-del:hover { color: var(--danger); background: rgba(192,57,43,.1); }
+  .item-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+
+  /* ── STATS BAR ── */
+  .stats-bar { padding: 9px 12px; border-top: 1px solid var(--border); background: var(--bg); flex-shrink: 0; }
+  .stats-row { display: flex; }
+  .stat { flex: 1; text-align: center; padding: 2px 0; }
+  .stat + .stat { border-left: 1px solid var(--border); }
+  .stat-val { font-size: 15px; font-weight: 800; color: var(--accent); }
+  .stat-lbl { font-size: 9px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 1px; letter-spacing: .04em; }
 
   /* ── TIMESTAMPS TAB ── */
-  .timestamps-view {
-    flex: 1; display: flex; flex-direction: column; overflow: hidden;
-  }
-  .timestamps-header {
-    padding: 12px 16px 0; flex-shrink: 0;
-  }
+  .timestamps-view { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .timestamps-header { padding: 12px 14px 0; flex-shrink: 0; }
   .timestamps-video-label {
     font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     padding-bottom: 10px; border-bottom: 1px solid var(--border);
   }
   .timestamps-video-label span { color: var(--text); }
-  .timestamps-list {
-    flex: 1; overflow-y: auto; padding: 8px 10px;
-    display: flex; flex-direction: column; gap: 2px;
-  }
+  .timestamps-list { flex: 1; overflow-y: auto; padding: 8px 8px; display: flex; flex-direction: column; gap: 2px; }
   .timestamps-list::-webkit-scrollbar { width: 3px; }
   .timestamps-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  /* timestamp items */
   .chapter-btn {
     display: flex; align-items: center; gap: 10px; padding: 8px 10px;
     border-radius: 8px; border: 1px solid transparent; background: none;
@@ -151,155 +281,31 @@
   .chapter-btn.active { background: #1e1b0e; border-color: var(--accent); }
   .chapter-time { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); min-width: 42px; flex-shrink: 0; }
   .chapter-name { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.3; }
-
-  /* loading / empty states */
-  .ts-state {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    height: 100%; gap: 10px; padding: 20px; text-align: center;
-  }
+  .ts-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 10px; padding: 20px; text-align: center; }
   .ts-state-icon { font-size: 28px; opacity: .3; }
   .ts-state p { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 15px; color: var(--muted); line-height: 1.6; }
   .ts-state .ts-sub { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); font-style: normal; margin-top: 4px; }
-
-  /* spinner */
   @keyframes spin { to { transform: rotate(360deg); } }
-  .spinner {
-    width: 20px; height: 20px; border: 2px solid var(--border);
-    border-top-color: var(--accent); border-radius: 50%;
-    animation: spin .7s linear infinite; flex-shrink: 0;
-  }
-  .ts-loading { display: flex; align-items: center; gap: 10px; padding: 20px 16px; font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
-
-  /* tab badge for timestamps count */
+  .spinner { width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0; }
+  .ts-loading { display: flex; align-items: center; gap: 10px; padding: 20px 14px; font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
   .ts-tab-count { transition: opacity .2s; }
 
-  /* ── QUEUE SIDE ── */
-  .queue-side { display: flex; flex-direction: column; overflow: hidden; background: var(--surface); }
+  /* ── STATS VIEW ── */
+  .stats-view-inner { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .stats-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+  .stats-card-title { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 12px; }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stats-big { font-size: 22px; font-weight: 800; color: var(--accent); }
+  .stats-sub { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 2px; letter-spacing: .04em; }
+  .goal-bar-track { height: 5px; background: var(--bg); border-radius: 3px; overflow: hidden; margin: 10px 0 6px; }
+  .goal-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); border-radius: 3px; transition: width .5s; }
+  .small-btn { background: none; border: 1px solid var(--border); border-radius: 7px; padding: 5px 12px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; color: var(--muted); cursor: pointer; transition: all .15s; }
+  .small-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .kbd-row { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 11px; padding: 4px 0; }
+  .kbd-row span { color: var(--muted); }
+  kbd { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 1px 7px; color: var(--text); font-size: 11px; font-family: 'DM Mono', monospace; }
 
-  /* ── PANEL TABS ── */
-  .panel-tabs {
-    display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0;
-    padding: 0 16px; gap: 0; position: relative;
-  }
-  .panel-tab {
-    padding: 12px 16px; font-size: 12px; font-weight: 700; font-family: 'Syne', sans-serif;
-    color: var(--muted); background: none; border: none; cursor: pointer;
-    border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s;
-    letter-spacing: .04em;
-  }
-  .panel-tab:hover { color: var(--text); }
-  .panel-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .tab-count {
-    display: inline-block; background: var(--surface2); border-radius: 50px;
-    padding: 1px 6px; font-size: 10px; font-family: 'DM Mono', monospace;
-    color: var(--muted); margin-left: 5px; vertical-align: middle;
-  }
-  /* + button in tab bar */
-  .add-trigger {
-    margin-left: auto; align-self: center;
-    width: 28px; height: 28px; border-radius: 8px;
-    background: var(--accent); color: #0c0c0e; border: none;
-    font-size: 18px; font-weight: 700; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    line-height: 1; transition: all .15s; flex-shrink: 0;
-  }
-  .add-trigger:hover { background: var(--accent2); transform: scale(1.05); }
-  .add-trigger.open { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); font-size: 14px; }
-
-  /* ── INLINE ADD ROW (slides in below tabs) ── */
-  .add-row-wrap {
-    max-height: 0; overflow: hidden;
-    transition: max-height .25s cubic-bezier(.4,0,.2,1), padding .25s;
-    border-bottom: 0px solid var(--border); flex-shrink: 0;
-  }
-  .add-row-wrap.open {
-    max-height: 60px;
-    border-bottom: 1px solid var(--border);
-  }
-  .add-row {
-    display: flex; align-items: center; gap: 8px;
-    padding: 10px 14px;
-  }
-  .url-input {
-    flex: 1; background: var(--surface2); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 8px 12px; font-family: 'DM Mono', monospace;
-    font-size: 12px; color: var(--text); outline: none; transition: border-color .2s;
-  }
-  .url-input:focus { border-color: var(--accent); }
-  .url-input::placeholder { color: var(--muted); }
-  .add-confirm {
-    background: var(--accent); color: #0c0c0e; border: none; border-radius: var(--radius);
-    padding: 8px 14px; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
-    cursor: pointer; transition: background .15s; white-space: nowrap; flex-shrink: 0;
-  }
-  .add-confirm:hover { background: var(--accent2); }
-
-  /* ── PANEL VIEWS ── */
-  .panel-view { display: none; flex: 1; flex-direction: column; overflow: hidden; }
-  .panel-view.active { display: flex; }
-
-  /* ── QUEUE VIEW ── */
-  .queue-header-bar {
-    padding: 10px 16px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
-  }
-  .queue-label { font-size: 12px; font-weight: 700; color: var(--text); }
-  .queue-count { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
-  .clear-btn {
-    font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted);
-    background: none; border: none; cursor: pointer; padding: 3px 7px;
-    border-radius: 5px; transition: all .15s;
-  }
-  .clear-btn:hover { color: var(--danger); }
-
-  .playlist { flex: 1; overflow-y: auto; padding: 8px; }
-  .playlist::-webkit-scrollbar { width: 3px; }
-  .playlist::-webkit-scrollbar-track { background: transparent; }
-  .playlist::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  .empty-queue {
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; height: 100%; gap: 8px; padding: 20px;
-  }
-  .empty-queue p {
-    font-family: 'Instrument Serif', serif; font-style: italic;
-    font-size: 15px; color: var(--muted); text-align: center; line-height: 1.6;
-  }
-
-  .queue-item {
-    display: flex; align-items: center; gap: 9px; padding: 9px;
-    border-radius: var(--radius); cursor: pointer; transition: all .15s;
-    border: 1px solid transparent; margin-bottom: 3px; position: relative;
-  }
-  .queue-item:hover { background: var(--surface2); border-color: var(--border); }
-  .queue-item.active { background: #1e1b0e; border-color: var(--accent); }
-  .queue-item.watched { background: var(--watched); border-color: var(--watched-border); }
-  .queue-item.watched .item-title { color: var(--muted); text-decoration: line-through; }
-
-  .item-thumb { width: 76px; height: 43px; border-radius: 6px; object-fit: cover; flex-shrink: 0; background: var(--surface2); }
-  .item-body { flex: 1; min-width: 0; }
-  .item-title { font-size: 11px; font-weight: 600; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .item-badge { display: inline-flex; align-items: center; gap: 3px; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 3px; }
-  .item-badge.done-badge { color: #6abf6a; }
-  .item-actions { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
-  .item-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 12px; padding: 2px 4px; border-radius: 4px; transition: all .15s; line-height: 1; }
-  .item-del:hover { color: var(--danger); background: rgba(192,57,43,.1); }
-  .item-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
-
-  /* ── STATS BAR ── */
-  .stats-bar { padding: 10px 16px; border-top: 1px solid var(--border); background: var(--bg); flex-shrink: 0; }
-  .stats-row { display: flex; }
-  .stat { flex: 1; text-align: center; padding: 2px 0; }
-  .stat + .stat { border-left: 1px solid var(--border); }
-  .stat-val { font-size: 16px; font-weight: 800; color: var(--accent); }
-  .stat-lbl { font-size: 9px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 1px; letter-spacing: .04em; }
-
-  /* ── CHAPTERS VIEW (right panel) ── */
-  .chapters-view-panel {
-    flex: 1; overflow: hidden; display: flex; flex-direction: column; padding: 14px 16px;
-  }
-
-  /* ── GOAL MODAL ── */
+  /* ── MODALS ── */
   .modal-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 200;
     display: flex; align-items: center; justify-content: center;
@@ -308,7 +314,8 @@
   .modal-overlay.open { opacity: 1; pointer-events: all; }
   .modal {
     background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
-    padding: 26px; width: 320px; transform: translateY(12px); transition: transform .2s;
+    padding: 24px; width: 340px; max-width: 94vw;
+    transform: translateY(12px); transition: transform .2s;
   }
   .modal-overlay.open .modal { transform: translateY(0); }
   .modal h3 { font-size: 15px; font-weight: 800; margin-bottom: 5px; }
@@ -316,18 +323,42 @@
   .modal input {
     width: 100%; background: var(--surface2); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 10px 14px; font-family: 'DM Mono', monospace;
-    font-size: 14px; color: var(--text); outline: none; margin-bottom: 14px;
-    transition: border-color .2s;
+    font-size: 14px; color: var(--text); outline: none; margin-bottom: 14px; transition: border-color .2s;
   }
   .modal input:focus { border-color: var(--accent); }
   .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+  /* playlists modal list */
+  .pl-modal-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; max-height: 240px; overflow-y: auto; }
+  .pl-modal-item {
+    display: flex; align-items: center; gap: 8px; padding: 9px 12px;
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    cursor: pointer; transition: all .15s;
+  }
+  .pl-modal-item:hover { border-color: var(--border); background: #202022; }
+  .pl-modal-item.current { border-color: var(--accent); background: #1e1b0e; }
+  .pl-modal-item-name { flex: 1; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pl-modal-item-count { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+  .pl-modal-item-actions { display: flex; gap: 3px; }
+
+  /* import progress bar */
+  .import-progress {
+    position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 20px; z-index: 400; min-width: 260px; max-width: 340px;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .import-progress.show { opacity: 1; }
+  .import-progress-label { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
+  .import-track { height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+  .import-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); border-radius: 2px; transition: width .3s; }
 
   /* ── TOAST ── */
   .toast {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(10px);
     background: var(--surface2); border: 1px solid var(--border); border-radius: 50px;
     padding: 9px 18px; font-size: 12px; font-family: 'DM Mono', monospace;
-    z-index: 300; opacity: 0; transition: all .22s; white-space: nowrap; pointer-events: none;
+    z-index: 500; opacity: 0; transition: all .22s; white-space: nowrap; pointer-events: none;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast.success { border-color: #3a6b3a; color: #6abf6a; }
@@ -349,16 +380,13 @@
     <span>⏱ <b id="watchTimer">00:00</b> today</span>
     <span id="goalStatus" style="display:none">🎯 <b id="goalProgress">0/0</b></span>
   </div>
-  <div class="header-right">
-    <button class="goal-badge" id="goalBtn" onclick="openGoalModal()">Set Goal</button>
-  </div>
+  <button class="goal-badge" id="goalBtn" onclick="openGoalModal()">Set Goal</button>
 </header>
 
 <div class="app">
 
-  <!-- LEFT: PLAYER SIDE -->
+  <!-- ── LEFT: PLAYER ── -->
   <div class="player-side">
-
     <div class="player-wrap" id="playerWrap">
       <div class="empty-player" id="emptyPlayer">
         <div class="icon">▶</div>
@@ -371,6 +399,7 @@
       <div class="video-title" id="videoTitle">—</div>
       <div class="video-meta">
         <span id="videoIndex">—</span>
+        <span id="videoDurationMeta"></span>
         <span id="watchedStatus"></span>
       </div>
     </div>
@@ -390,13 +419,23 @@
       <button class="btn btn-ghost" id="nextBtn" onclick="playNext()" disabled>Next →</button>
       <button class="btn btn-ghost btn-skip" id="skipBtn" onclick="skipVideo()" disabled>⤷ Skip</button>
     </div>
-
   </div>
 
-  <!-- RIGHT: QUEUE SIDE -->
+  <!-- ── RIGHT: QUEUE PANEL ── -->
   <div class="queue-side">
 
-    <!-- TABS + ADD BUTTON -->
+    <!-- PLAYLIST SELECTOR BAR -->
+    <div class="pl-bar" id="plBar">
+      <button class="pl-current-btn" onclick="togglePlDropdown()">
+        <span class="pl-current-name" id="plCurrentName">My Queue</span>
+        <span class="pl-arrow" id="plArrow">▼</span>
+      </button>
+      <button class="pl-new-btn" onclick="openNewPlaylistModal()">+ New</button>
+      <!-- DROPDOWN -->
+      <div class="pl-dropdown" id="plDropdown"></div>
+    </div>
+
+    <!-- TABS -->
     <div class="panel-tabs">
       <button class="panel-tab active" id="tabQueue" onclick="switchTab('queue')">
         Queue <span class="tab-count" id="tabQueueCount">0</span>
@@ -407,30 +446,35 @@
       <button class="panel-tab" id="tabStats" onclick="switchTab('stats')">
         Stats
       </button>
-      <button class="add-trigger" id="addTrigger" onclick="toggleAddRow()" title="Add video">+</button>
+      <button class="add-trigger" id="addTrigger" onclick="toggleAddRow()" title="Add video or playlist">+</button>
     </div>
 
-    <!-- INLINE ADD ROW -->
+    <!-- ADD ROW -->
     <div class="add-row-wrap" id="addRowWrap">
       <div class="add-row">
         <input class="url-input" id="urlInput" type="text"
-          placeholder="YouTube URL or video ID…"
-          onkeydown="if(event.key==='Enter')addVideo(); if(event.key==='Escape')toggleAddRow()">
-        <button class="add-confirm" onclick="addVideo()">Add</button>
+          placeholder="Video URL, ID, or playlist URL…"
+          onkeydown="if(event.key==='Enter')handleAdd(); if(event.key==='Escape')toggleAddRow(false)">
+        <button class="add-confirm" onclick="handleAdd()">Add</button>
       </div>
     </div>
 
-    <!-- QUEUE VIEW -->
+    <!-- ── QUEUE VIEW ── -->
     <div class="panel-view active" id="viewQueue">
       <div class="queue-header-bar">
-        <span class="queue-label">Up Next</span>
-        <span class="queue-count" id="queueCount">0 videos</span>
-        <button class="clear-btn" onclick="clearAll()">Clear all</button>
+        <div class="queue-header-top">
+          <span class="queue-label">Up Next</span>
+          <span class="queue-time-left" id="queueTimeLeft"></span>
+          <button class="icon-btn" id="filterBtn" onclick="toggleWatchedFilter()" title="Toggle unwatched only">👁</button>
+          <button class="icon-btn" id="searchBtn" onclick="toggleSearch()" title="Search queue">🔍</button>
+          <button class="clear-btn" onclick="clearAll()">Clear</button>
+        </div>
+        <div class="search-row" id="searchRow">
+          <input class="search-input" id="searchInput" placeholder="Search queue…" oninput="onSearchInput()">
+        </div>
       </div>
       <div class="playlist" id="playlist">
-        <div class="empty-queue">
-          <p>Your queue is empty.<br>Tap + to add a video.</p>
-        </div>
+        <div class="empty-queue"><p>Your queue is empty.<br>Tap + to add a video.</p></div>
       </div>
       <div class="stats-bar">
         <div class="stats-row">
@@ -442,7 +486,7 @@
       </div>
     </div>
 
-    <!-- TIMESTAMPS VIEW -->
+    <!-- ── TIMESTAMPS VIEW ── -->
     <div class="panel-view" id="viewTimestamps">
       <div class="timestamps-view">
         <div class="timestamps-header">
@@ -451,59 +495,56 @@
         <div class="timestamps-list" id="timestampsList">
           <div class="ts-state">
             <div class="ts-state-icon">📍</div>
-            <p>Timestamps will appear here<br>when a video is loaded.</p>
+            <p>Timestamps appear here<br>when a video is loaded.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- STATS / GOAL VIEW -->
+    <!-- ── STATS VIEW ── -->
     <div class="panel-view" id="viewStats">
-      <div style="padding: 24px 20px; display: flex; flex-direction: column; gap: 20px;">
+      <div class="stats-view-inner">
 
-        <div>
-          <div class="section-label" style="margin-bottom:14px;">Session</div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;">
-              <div style="font-size:22px;font-weight:800;color:var(--accent);font-family:'DM Mono',monospace" id="statsTimerLarge">00:00</div>
-              <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:3px;letter-spacing:.06em">WATCH TIME</div>
+        <div class="stats-card">
+          <div class="stats-card-title">Session</div>
+          <div class="stats-grid">
+            <div>
+              <div class="stats-big" id="statsTimerLarge">00:00</div>
+              <div class="stats-sub">WATCH TIME</div>
             </div>
-            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;">
-              <div style="font-size:22px;font-weight:800;color:var(--accent)" id="statsWatchedLarge">0</div>
-              <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:3px;letter-spacing:.06em">WATCHED</div>
+            <div>
+              <div class="stats-big" id="statsWatchedLarge">0</div>
+              <div class="stats-sub">WATCHED</div>
             </div>
           </div>
         </div>
 
-        <div>
-          <div class="section-label" style="margin-bottom:14px;">Daily Goal</div>
-          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;">
-            <div id="goalDisplay" style="font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);">No goal set.</div>
-            <div style="margin-top:12px;">
-              <div style="height:5px;background:var(--bg);border-radius:3px;overflow:hidden;">
-                <div id="goalBarFill" style="height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:3px;width:0%;transition:width .5s;"></div>
-              </div>
+        <div class="stats-card">
+          <div class="stats-card-title">Queue Time</div>
+          <div class="stats-grid">
+            <div>
+              <div class="stats-big" id="statsTotalTime">—</div>
+              <div class="stats-sub">TOTAL</div>
             </div>
-            <button onclick="openGoalModal()" style="margin-top:12px;background:none;border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Edit Goal</button>
+            <div>
+              <div class="stats-big" id="statsRemainingTime">—</div>
+              <div class="stats-sub">REMAINING</div>
+            </div>
           </div>
         </div>
 
-        <div>
-          <div class="section-label" style="margin-bottom:14px;">Keyboard Shortcuts</div>
-          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
-            <div style="display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:11px;">
-              <span style="color:var(--muted)">Next video</span>
-              <kbd style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:1px 7px;color:var(--text);font-size:11px;">→</kbd>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:11px;">
-              <span style="color:var(--muted)">Prev video</span>
-              <kbd style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:1px 7px;color:var(--text);font-size:11px;">←</kbd>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:11px;">
-              <span style="color:var(--muted)">Mark watched</span>
-              <kbd style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:1px 7px;color:var(--text);font-size:11px;">W</kbd>
-            </div>
-          </div>
+        <div class="stats-card">
+          <div class="stats-card-title">Daily Goal</div>
+          <div id="goalDisplay" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">No goal set.</div>
+          <div class="goal-bar-track"><div class="goal-bar-fill" id="goalBarFill" style="width:0%"></div></div>
+          <button class="small-btn" onclick="openGoalModal()">Edit Goal</button>
+        </div>
+
+        <div class="stats-card">
+          <div class="stats-card-title">Shortcuts</div>
+          <div class="kbd-row"><span>Next video</span><kbd>→</kbd></div>
+          <div class="kbd-row"><span>Prev video</span><kbd>←</kbd></div>
+          <div class="kbd-row"><span>Mark watched</span><kbd>W</kbd></div>
         </div>
 
       </div>
@@ -517,7 +558,7 @@
   <div class="modal">
     <h3>🎯 Set Daily Goal</h3>
     <p>How many videos do you want to watch today?</p>
-    <input type="number" id="goalInput" min="1" max="50" placeholder="e.g. 5" onkeydown="if(event.key==='Enter')saveGoal()">
+    <input type="number" id="goalInput" min="1" max="200" placeholder="e.g. 5" onkeydown="if(event.key==='Enter')saveGoal()">
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeGoalModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveGoal()">Set Goal</button>
@@ -525,47 +566,111 @@
   </div>
 </div>
 
+<!-- NEW PLAYLIST MODAL -->
+<div class="modal-overlay" id="newPlModal">
+  <div class="modal">
+    <h3>📂 New Playlist</h3>
+    <p>Give your new playlist a name.</p>
+    <input type="text" id="newPlInput" placeholder="e.g. JS Course, Design Talks…" maxlength="40" onkeydown="if(event.key==='Enter')confirmNewPlaylist(); if(event.key==='Escape')closeNewPlModal()">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeNewPlModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmNewPlaylist()">Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- RENAME PLAYLIST MODAL -->
+<div class="modal-overlay" id="renamePlModal">
+  <div class="modal">
+    <h3>✏️ Rename Playlist</h3>
+    <p>Enter a new name.</p>
+    <input type="text" id="renamePlInput" placeholder="Playlist name…" maxlength="40" onkeydown="if(event.key==='Enter')confirmRenamePlaylist(); if(event.key==='Escape')closeRenamePlModal()">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeRenamePlModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmRenamePlaylist()">Rename</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT PROGRESS -->
+<div class="import-progress" id="importProgress">
+  <div class="import-progress-label">
+    <span id="importLabel">Importing playlist…</span>
+    <span id="importCount">0 / 0</span>
+  </div>
+  <div class="import-track"><div class="import-fill" id="importFill" style="width:0%"></div></div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ── STATE ────────────────────────────────────────────────────────────────────
-let playlist = [];
+// ══════════════════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════════════════
+const YT_API_KEY = 'AIzaSyCDAskn-atleKjmh_RcMXTbjz1l88kMqdA';
+
+let playlists = [];      // [{id, name, videos:[{id,title,thumb,watched,duration,durationSec}]}]
+let activePLId = '';
 let currentIndex = -1;
-let ytPlayer = null;
-let playerReady = false;
-let sessionSeconds = 0;
-let dailyGoal = 0;
+let ytPlayer = null, playerReady = false;
+let sessionSeconds = 0, dailyGoal = 0;
 let autoAdvance = true;
-let addRowOpen = false;
-let activeTab = 'queue';
+let addRowOpen = false, activeTab = 'queue';
+let searchQuery = '', showUnwatchedOnly = false;
+let plDropdownOpen = false;
+let renamingPLId = null;
+let chapters = [], chapterTrackInterval = null;
 
-const KEY_PLAYLIST = 'queue_playlist';
-const KEY_GOAL     = 'queue_goal';
-const KEY_SESSION  = 'queue_session_' + new Date().toDateString();
+const KEY_PLAYLISTS = 'queue_playlists_v2';
+const KEY_ACTIVE_PL = 'queue_active_pl';
+const KEY_GOAL      = 'queue_goal';
+const KEY_SESSION   = 'queue_session_' + new Date().toDateString();
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function getVideos() {
+  const pl = playlists.find(p => p.id === activePLId);
+  return pl ? pl.videos : [];
+}
+function getActivePL() { return playlists.find(p => p.id === activePLId); }
+function uid() { return 'pl_' + Math.random().toString(36).slice(2,9); }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════════════════
 function init() {
-  const saved = localStorage.getItem(KEY_PLAYLIST);
-  if (saved) playlist = JSON.parse(saved);
+  // Load playlists
+  const raw = localStorage.getItem(KEY_PLAYLISTS);
+  if (raw) {
+    try { playlists = JSON.parse(raw); } catch { playlists = []; }
+  }
+  if (!playlists.length) {
+    playlists = [{ id: uid(), name: 'My Queue', videos: [] }];
+  }
+
+  activePLId = localStorage.getItem(KEY_ACTIVE_PL) || playlists[0].id;
+  if (!playlists.find(p => p.id === activePLId)) activePLId = playlists[0].id;
+
   sessionSeconds = parseInt(localStorage.getItem(KEY_SESSION) || '0');
   dailyGoal = parseInt(localStorage.getItem(KEY_GOAL) || '0');
-  updateGoalUI();
+
+  updatePlBar();
   renderPlaylist();
   updateProgress();
   updateStats();
+  updateGoalUI();
   updateTimer();
   startTimerInterval();
-  renderChapters();
 }
 
-// ── YOUTUBE API ──────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// YOUTUBE API
+// ══════════════════════════════════════════════════════════════════════════════
 function loadYTAPI() {
   const tag = document.createElement('script');
   tag.src = 'https://www.youtube.com/iframe_api';
   document.head.appendChild(tag);
 }
-
 function onYouTubeIframeAPIReady() {
   ytPlayer = new YT.Player('ytPlayer', {
     height: '100%', width: '100%',
@@ -576,70 +681,189 @@ function onYouTubeIframeAPIReady() {
     }
   });
 }
-
 function onPlayerStateChange(e) {
-  if (e.data === YT.PlayerState.ENDED) {
-    if (autoAdvance) {
-      markWatched();
-      setTimeout(() => playNext(), 800);
-    }
+  if (e.data === YT.PlayerState.ENDED && autoAdvance) {
+    markWatched();
+    setTimeout(() => playNext(), 800);
   }
 }
 
-// ── VIDEO ID ─────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// PLAYLIST MANAGEMENT
+// ══════════════════════════════════════════════════════════════════════════════
+function updatePlBar() {
+  const pl = getActivePL();
+  document.getElementById('plCurrentName').textContent = pl ? pl.name : '—';
+  renderPlDropdown();
+}
+
+function togglePlDropdown() {
+  plDropdownOpen = !plDropdownOpen;
+  document.getElementById('plDropdown').classList.toggle('open', plDropdownOpen);
+  document.getElementById('plArrow').classList.toggle('open', plDropdownOpen);
+  if (plDropdownOpen) renderPlDropdown();
+}
+function closePlDropdown() {
+  plDropdownOpen = false;
+  document.getElementById('plDropdown').classList.remove('open');
+  document.getElementById('plArrow').classList.remove('open');
+}
+
+function renderPlDropdown() {
+  const el = document.getElementById('plDropdown');
+  el.innerHTML = playlists.map(pl => `
+    <div class="pl-item ${pl.id === activePLId ? 'active-pl' : ''}" onclick="switchPlaylist('${pl.id}')">
+      <div class="${pl.id === activePLId ? 'pl-active-dot' : 'pl-inactive-dot'}"></div>
+      <span class="pl-item-name">${escHtml(pl.name)}</span>
+      <span class="pl-item-count">${pl.videos.length}</span>
+      <div class="pl-item-actions" onclick="event.stopPropagation()">
+        <button class="pl-icon-btn" onclick="openRenamePLModal('${pl.id}')" title="Rename">✏️</button>
+        ${playlists.length > 1
+          ? `<button class="pl-icon-btn del" onclick="deletePlaylist('${pl.id}')" title="Delete">✕</button>`
+          : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function switchPlaylist(id) {
+  if (id === activePLId) { closePlDropdown(); return; }
+  activePLId = id;
+  currentIndex = -1;
+  localStorage.setItem(KEY_ACTIVE_PL, activePLId);
+  closePlDropdown();
+  // Reset player
+  document.getElementById('emptyPlayer').style.display = 'flex';
+  document.getElementById('ytPlayer').style.display = 'none';
+  document.getElementById('videoInfo').style.display = 'none';
+  ['prevBtn','nextBtn','markBtn','skipBtn'].forEach(id => document.getElementById(id).disabled = true);
+  if (ytPlayer && playerReady) { try { ytPlayer.stopVideo(); } catch {} }
+  // Reset timestamps
+  chapters = [];
+  document.getElementById('timestampsList').innerHTML = `<div class="ts-state"><div class="ts-state-icon">📍</div><p>Timestamps appear here<br>when a video is loaded.</p></div>`;
+  document.getElementById('tsVideoLabel').textContent = 'No video playing';
+  document.getElementById('tabTsCount').style.opacity = '0';
+  updatePlBar();
+  renderPlaylist();
+  updateProgress();
+  updateStats();
+}
+
+function openNewPlaylistModal() {
+  closePlDropdown();
+  document.getElementById('newPlInput').value = '';
+  document.getElementById('newPlModal').classList.add('open');
+  setTimeout(() => document.getElementById('newPlInput').focus(), 100);
+}
+function closeNewPlModal() { document.getElementById('newPlModal').classList.remove('open'); }
+function confirmNewPlaylist() {
+  const name = document.getElementById('newPlInput').value.trim();
+  if (!name) return;
+  const pl = { id: uid(), name, videos: [] };
+  playlists.push(pl);
+  savePersist();
+  closeNewPlModal();
+  switchPlaylist(pl.id);
+  showToast(`✓ Created "${name}"`, 'success');
+}
+
+function openRenamePLModal(id) {
+  closePlDropdown();
+  renamingPLId = id;
+  const pl = playlists.find(p => p.id === id);
+  document.getElementById('renamePlInput').value = pl ? pl.name : '';
+  document.getElementById('renamePlModal').classList.add('open');
+  setTimeout(() => document.getElementById('renamePlInput').focus(), 100);
+}
+function closeRenamePlModal() { document.getElementById('renamePlModal').classList.remove('open'); renamingPLId = null; }
+function confirmRenamePlaylist() {
+  const name = document.getElementById('renamePlInput').value.trim();
+  if (!name || !renamingPLId) return;
+  const pl = playlists.find(p => p.id === renamingPLId);
+  if (pl) pl.name = name;
+  savePersist();
+  closeRenamePlModal();
+  updatePlBar();
+  showToast('✓ Renamed', 'success');
+}
+
+function deletePlaylist(id) {
+  if (playlists.length <= 1) return;
+  const pl = playlists.find(p => p.id === id);
+  if (!confirm(`Delete "${pl?.name}"? This cannot be undone.`)) return;
+  playlists = playlists.filter(p => p.id !== id);
+  savePersist();
+  if (activePLId === id) switchPlaylist(playlists[0].id);
+  else { renderPlDropdown(); }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// VIDEO ID EXTRACTION
+// ══════════════════════════════════════════════════════════════════════════════
 function extractVideoId(input) {
   input = input.trim();
   const patterns = [
-    // Standard watch URL: youtube.com/watch?v=ID  (also handles &t=, &si=, etc.)
     /[?&]v=([A-Za-z0-9_-]{11})/,
-    // Short URL: youtu.be/ID
     /youtu\.be\/([A-Za-z0-9_-]{11})/,
-    // Shorts: youtube.com/shorts/ID
     /youtube\.com\/shorts\/([A-Za-z0-9_-]{11})/,
-    // Live: youtube.com/live/ID
     /youtube\.com\/live\/([A-Za-z0-9_-]{11})/,
-    // Embed: youtube.com/embed/ID  or  youtube-nocookie.com/embed/ID
     /youtube(?:-nocookie)?\.com\/(?:embed|v)\/([A-Za-z0-9_-]{11})/,
-    // Raw 11-char ID (no slashes/dots around it)
     /^([A-Za-z0-9_-]{11})$/
   ];
-  for (const p of patterns) {
-    const m = input.match(p);
-    if (m) return m[1];
-  }
+  for (const p of patterns) { const m = input.match(p); if (m) return m[1]; }
   return null;
 }
 
-// ── ADD VIDEO ────────────────────────────────────────────────────────────────
-async function addVideo() {
+function extractPlaylistId(input) {
+  const m = input.match(/[?&]list=(PL[A-Za-z0-9_-]+)/);
+  return m ? m[1] : null;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ADD / IMPORT
+// ══════════════════════════════════════════════════════════════════════════════
+async function handleAdd() {
   const input = document.getElementById('urlInput');
   const val = input.value.trim();
   if (!val) return;
-  const id = extractVideoId(val);
-  if (!id) { showToast('⚠ Invalid URL or ID', 'error'); return; }
-  if (playlist.find(v => v.id === id)) { showToast('Already in queue', 'error'); return; }
 
-  const video = { id, title: 'Loading...', thumb: `https://img.youtube.com/vi/${id}/mqdefault.jpg`, watched: false };
-  playlist.push(video);
+  const plId = extractPlaylistId(val);
+  if (plId) {
+    input.value = '';
+    toggleAddRow(false);
+    await importPlaylist(plId);
+    return;
+  }
+
+  const vid = extractVideoId(val);
+  if (!vid) { showToast('⚠ Invalid URL or ID', 'error'); return; }
+
+  const videos = getVideos();
+  if (videos.find(v => v.id === vid)) { showToast('Already in queue', 'error'); return; }
+
+  const video = { id: vid, title: 'Loading…', thumb: `https://img.youtube.com/vi/${vid}/mqdefault.jpg`, watched: false, duration: '', durationSec: 0 };
+  videos.push(video);
   input.value = '';
-  // Close the add row after adding
   toggleAddRow(false);
   renderPlaylist();
   updateProgress();
   updateStats();
   savePersist();
 
+  // Fetch title + duration
   try {
-    const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`);
+    const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${vid}&key=${YT_API_KEY}`);
     if (res.ok) {
       const data = await res.json();
-      video.title = data.title;
-      savePersist();
-      renderPlaylist();
-      // Update timestamp tab label if still on this video
-      if (currentIndex !== -1 && playlist[currentIndex] && playlist[currentIndex].id === id) {
-        const labelEl = document.getElementById('tsVideoLabel');
-        if (labelEl) labelEl.innerHTML = `<span>${data.title}</span>`;
+      const item = data.items?.[0];
+      if (item) {
+        video.title = item.snippet.title;
+        const dur = parseDuration(item.contentDetails?.duration || '');
+        video.duration = dur.formatted;
+        video.durationSec = dur.seconds;
+        savePersist();
+        renderPlaylist();
+        updateStats();
       }
     }
   } catch {}
@@ -648,7 +872,123 @@ async function addVideo() {
   if (currentIndex === -1) playVideo(0);
 }
 
-// ── TAB TOGGLE ───────────────────────────────────────────────────────────────
+// ── Import full playlist ──────────────────────────────────────────────────────
+async function importPlaylist(playlistId) {
+  showImportProgress('Fetching playlist…', 0, 0);
+
+  let videoIds = [];
+  let pageToken = '';
+  let fetched = 0;
+
+  // Step 1: collect all video IDs from playlistItems (max 200)
+  try {
+    do {
+      const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=${playlistId}&maxResults=50&key=${YT_API_KEY}${pageToken ? '&pageToken=' + pageToken : ''}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Playlist not found or private');
+      const data = await res.json();
+      const ids = (data.items || []).map(i => i.contentDetails.videoId).filter(Boolean);
+      videoIds.push(...ids);
+      pageToken = data.nextPageToken || '';
+      fetched += ids.length;
+      updateImportProgress(`Fetching playlist…`, fetched, data.pageInfo?.totalResults || fetched);
+    } while (pageToken && videoIds.length < 200);
+  } catch (err) {
+    hideImportProgress();
+    showToast(`⚠ ${err.message}`, 'error');
+    return;
+  }
+
+  if (!videoIds.length) {
+    hideImportProgress();
+    showToast('Playlist appears empty', 'error');
+    return;
+  }
+
+  // Step 2: filter out already-added IDs
+  const videos = getVideos();
+  const existingIds = new Set(videos.map(v => v.id));
+  videoIds = videoIds.filter(id => !existingIds.has(id));
+
+  if (!videoIds.length) {
+    hideImportProgress();
+    showToast('All videos already in queue', 'error');
+    return;
+  }
+
+  // Step 3: batch fetch titles + durations (50 per request)
+  let added = 0;
+  const total = videoIds.length;
+  const chunks = [];
+  for (let i = 0; i < videoIds.length; i += 50) chunks.push(videoIds.slice(i, i + 50));
+
+  for (const chunk of chunks) {
+    try {
+      updateImportProgress(`Adding videos…`, added, total);
+      const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${chunk.join(',')}&key=${YT_API_KEY}`);
+      if (!res.ok) throw new Error('Fetch failed');
+      const data = await res.json();
+      for (const item of (data.items || [])) {
+        const dur = parseDuration(item.contentDetails?.duration || '');
+        videos.push({
+          id: item.id,
+          title: item.snippet.title,
+          thumb: `https://img.youtube.com/vi/${item.id}/mqdefault.jpg`,
+          watched: false,
+          duration: dur.formatted,
+          durationSec: dur.seconds
+        });
+        added++;
+      }
+      savePersist();
+      renderPlaylist();
+      updateStats();
+      updateImportProgress(`Adding videos…`, added, total);
+    } catch {}
+  }
+
+  hideImportProgress();
+  showToast(`✓ Imported ${added} video${added !== 1 ? 's' : ''}`, 'success');
+  if (currentIndex === -1 && getVideos().length > 0) playVideo(0);
+}
+
+function showImportProgress(label, current, total) {
+  document.getElementById('importProgress').classList.add('show');
+  updateImportProgress(label, current, total);
+}
+function updateImportProgress(label, current, total) {
+  document.getElementById('importLabel').textContent = label;
+  document.getElementById('importCount').textContent = total ? `${current} / ${total}` : '';
+  document.getElementById('importFill').style.width = total ? `${Math.round(current/total*100)}%` : '0%';
+}
+function hideImportProgress() {
+  document.getElementById('importProgress').classList.remove('show');
+}
+
+// ── Duration parsing ──────────────────────────────────────────────────────────
+function parseDuration(iso) {
+  if (!iso) return { formatted: '', seconds: 0 };
+  const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!m) return { formatted: '', seconds: 0 };
+  const h = parseInt(m[1] || 0), min = parseInt(m[2] || 0), s = parseInt(m[3] || 0);
+  const total = h * 3600 + min * 60 + s;
+  const fmt = h > 0
+    ? `${h}:${String(min).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+    : `${min}:${String(s).padStart(2,'0')}`;
+  return { formatted: fmt, seconds: total };
+}
+
+function formatDuration(seconds) {
+  if (!seconds) return '—';
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}m`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TABS / UI TOGGLES
+// ══════════════════════════════════════════════════════════════════════════════
 function switchTab(tab) {
   activeTab = tab;
   document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
@@ -659,30 +999,45 @@ function switchTab(tab) {
   document.getElementById(viewId).classList.add('active');
 }
 
-// ── ADD ROW TOGGLE ────────────────────────────────────────────────────────────
 function toggleAddRow(forceState) {
-  const wrap = document.getElementById('addRowWrap');
-  const trigger = document.getElementById('addTrigger');
-  if (forceState !== undefined) {
-    addRowOpen = forceState;
-  } else {
-    addRowOpen = !addRowOpen;
-  }
-  wrap.classList.toggle('open', addRowOpen);
-  trigger.classList.toggle('open', addRowOpen);
-  trigger.textContent = addRowOpen ? '✕' : '+';
+  addRowOpen = forceState !== undefined ? forceState : !addRowOpen;
+  document.getElementById('addRowWrap').classList.toggle('open', addRowOpen);
+  document.getElementById('addTrigger').classList.toggle('open', addRowOpen);
+  document.getElementById('addTrigger').textContent = addRowOpen ? '✕' : '+';
   if (addRowOpen) {
     setTimeout(() => document.getElementById('urlInput').focus(), 200);
-    // Switch to queue tab when opening add
     if (activeTab !== 'queue') switchTab('queue');
+    closePlDropdown();
   }
 }
 
-// ── PLAY VIDEO ───────────────────────────────────────────────────────────────
+function toggleWatchedFilter() {
+  showUnwatchedOnly = !showUnwatchedOnly;
+  document.getElementById('filterBtn').classList.toggle('active-filter', showUnwatchedOnly);
+  renderPlaylist();
+}
+
+function toggleSearch() {
+  const row = document.getElementById('searchRow');
+  const open = !row.classList.contains('open');
+  row.classList.toggle('open', open);
+  if (open) { setTimeout(() => document.getElementById('searchInput').focus(), 100); }
+  else { document.getElementById('searchInput').value = ''; searchQuery = ''; renderPlaylist(); }
+}
+
+function onSearchInput() {
+  searchQuery = document.getElementById('searchInput').value.trim();
+  renderPlaylist();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PLAY VIDEO
+// ══════════════════════════════════════════════════════════════════════════════
 function playVideo(index) {
-  if (index < 0 || index >= playlist.length) return;
+  const videos = getVideos();
+  if (index < 0 || index >= videos.length) return;
   currentIndex = index;
-  const video = playlist[index];
+  const video = videos[index];
 
   document.getElementById('emptyPlayer').style.display = 'none';
   document.getElementById('ytPlayer').style.display = 'block';
@@ -696,69 +1051,84 @@ function playVideo(index) {
     }, 200);
   }
 
-  document.getElementById('videoTitle').textContent = video.title === 'Loading...' ? `Video ${index + 1}` : video.title;
-  document.getElementById('videoIndex').textContent = `${index + 1} of ${playlist.length}`;
+  document.getElementById('videoTitle').textContent = video.title === 'Loading…' ? `Video ${index + 1}` : video.title;
+  document.getElementById('videoIndex').textContent = `${index + 1} of ${videos.length}`;
+  document.getElementById('videoDurationMeta').textContent = video.duration || '';
   document.getElementById('watchedStatus').textContent = video.watched ? '✓ Watched' : '';
   document.getElementById('watchedStatus').style.color = video.watched ? '#6abf6a' : '';
 
   document.getElementById('prevBtn').disabled = index === 0;
-  document.getElementById('nextBtn').disabled = index === playlist.length - 1;
+  document.getElementById('nextBtn').disabled = index === videos.length - 1;
   document.getElementById('markBtn').disabled = false;
   document.getElementById('skipBtn').disabled = false;
   document.getElementById('markBtn').textContent = video.watched ? '↩ Unmark' : '✓ Mark Watched';
 
-  // Auto-fetch timestamps for this video
-  fetchTimestamps(video.id, video.title !== 'Loading...' ? video.title : null);
-
+  fetchTimestamps(video.id, video.title !== 'Loading…' ? video.title : null);
   renderPlaylist();
   updateProgress();
 }
 
 function playPrev() { if (currentIndex > 0) playVideo(currentIndex - 1); }
-function playNext() { if (currentIndex < playlist.length - 1) playVideo(currentIndex + 1); }
+function playNext() { const v = getVideos(); if (currentIndex < v.length - 1) playVideo(currentIndex + 1); }
 function skipVideo() { playNext(); }
 
-// ── MARK WATCHED ─────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// MARK WATCHED
+// ══════════════════════════════════════════════════════════════════════════════
 function markWatched() {
   if (currentIndex === -1) return;
-  playlist[currentIndex].watched = !playlist[currentIndex].watched;
+  const v = getVideos()[currentIndex];
+  v.watched = !v.watched;
   savePersist();
   renderPlaylist();
   updateProgress();
   updateStats();
   updateGoalUI();
-  const v = playlist[currentIndex];
   document.getElementById('markBtn').textContent = v.watched ? '↩ Unmark' : '✓ Mark Watched';
   document.getElementById('watchedStatus').textContent = v.watched ? '✓ Watched' : '';
   document.getElementById('watchedStatus').style.color = v.watched ? '#6abf6a' : '';
   if (v.watched) showToast('✓ Marked as watched', 'success');
 }
 
-// ── RENDER PLAYLIST ──────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// RENDER PLAYLIST
+// ══════════════════════════════════════════════════════════════════════════════
 function renderPlaylist() {
   const el = document.getElementById('playlist');
   const cnt = document.getElementById('queueCount');
   const tabCnt = document.getElementById('tabQueueCount');
-  if (playlist.length === 0) {
-    el.innerHTML = `<div class="empty-queue"><p>Your queue is empty.<br>Tap + to add a video.</p></div>`;
-    cnt.textContent = '0 videos';
-    tabCnt.textContent = '0';
+  const allVideos = getVideos();
+
+  tabCnt.textContent = allVideos.length;
+  cnt.textContent = `${allVideos.length} video${allVideos.length !== 1 ? 's' : ''}`;
+
+  // Apply filters
+  let displayed = allVideos.map((v, i) => ({ ...v, origIndex: i }));
+  if (showUnwatchedOnly) displayed = displayed.filter(v => !v.watched);
+  if (searchQuery) displayed = displayed.filter(v => v.title.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  if (displayed.length === 0) {
+    if (allVideos.length === 0) {
+      el.innerHTML = `<div class="empty-queue"><p>Your queue is empty.<br>Tap + to add a video.</p></div>`;
+    } else {
+      el.innerHTML = `<div class="empty-queue"><p>No videos match<br>your current filter.</p></div>`;
+    }
     return;
   }
-  cnt.textContent = `${playlist.length} video${playlist.length !== 1 ? 's' : ''}`;
-  tabCnt.textContent = playlist.length;
-  el.innerHTML = playlist.map((v, i) => `
-    <div class="queue-item ${i === currentIndex ? 'active' : ''} ${v.watched ? 'watched' : ''}" onclick="playVideo(${i})">
+
+  el.innerHTML = displayed.map(v => `
+    <div class="queue-item ${v.origIndex === currentIndex ? 'active' : ''} ${v.watched ? 'watched' : ''}" onclick="playVideo(${v.origIndex})">
       <img class="item-thumb" src="${v.thumb}" alt="" onerror="this.style.background='#2a2a2e'">
       <div class="item-body">
-        <div class="item-title">${v.title}</div>
-        <div class="item-badge ${v.watched ? 'done-badge' : ''}">
-          ${v.watched ? '✓ Watched' : `#${i + 1}`}
+        <div class="item-title">${escHtml(v.title)}</div>
+        <div class="item-meta">
+          <span class="item-badge ${v.watched ? 'done-badge' : ''}">${v.watched ? '✓ Watched' : `#${v.origIndex + 1}`}</span>
+          ${v.duration ? `<span class="item-duration">${v.duration}</span>` : ''}
         </div>
       </div>
       <div class="item-actions">
-        <button class="item-del" onclick="removeVideo(event, ${i})">✕</button>
-        <div class="item-num">${i + 1}</div>
+        <button class="item-del" onclick="removeVideo(event, ${v.origIndex})">✕</button>
+        <div class="item-num">${v.origIndex + 1}</div>
       </div>
     </div>
   `).join('');
@@ -766,10 +1136,11 @@ function renderPlaylist() {
 
 function removeVideo(e, index) {
   e.stopPropagation();
-  playlist.splice(index, 1);
+  const videos = getVideos();
+  videos.splice(index, 1);
   if (currentIndex === index) {
     currentIndex = -1;
-    if (playlist.length > 0) playVideo(Math.min(index, playlist.length - 1));
+    if (videos.length > 0) playVideo(Math.min(index, videos.length - 1));
     else {
       document.getElementById('emptyPlayer').style.display = 'flex';
       document.getElementById('ytPlayer').style.display = 'none';
@@ -786,47 +1157,71 @@ function removeVideo(e, index) {
 }
 
 function clearAll() {
-  if (!playlist.length) return;
-  if (!confirm('Clear entire queue?')) return;
-  playlist = [];
+  const videos = getVideos();
+  if (!videos.length) return;
+  if (!confirm('Clear this entire queue?')) return;
+  getActivePL().videos = [];
   currentIndex = -1;
   document.getElementById('emptyPlayer').style.display = 'flex';
   document.getElementById('ytPlayer').style.display = 'none';
   document.getElementById('videoInfo').style.display = 'none';
   ['prevBtn','nextBtn','markBtn','skipBtn'].forEach(id => document.getElementById(id).disabled = true);
+  if (ytPlayer && playerReady) { try { ytPlayer.stopVideo(); } catch {} }
   savePersist();
   renderPlaylist();
   updateProgress();
   updateStats();
 }
 
-// ── PROGRESS ─────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// PROGRESS + STATS
+// ══════════════════════════════════════════════════════════════════════════════
 function updateProgress() {
-  const total = playlist.length;
-  const done = playlist.filter(v => v.watched).length;
+  const videos = getVideos();
+  const total = videos.length;
+  const done = videos.filter(v => v.watched).length;
   const pct = total ? Math.round((done / total) * 100) : 0;
   document.getElementById('progressText').textContent = `${done} / ${total}`;
   document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressSteps').innerHTML = playlist.map((v, i) => `
-    <div class="step-dot ${v.watched ? 'done' : (i === currentIndex ? 'active' : '')}" onclick="playVideo(${i})" title="${v.title}"></div>
+  document.getElementById('progressSteps').innerHTML = videos.map((v, i) => `
+    <div class="step-dot ${v.watched ? 'done' : (i === currentIndex ? 'active' : '')}" onclick="playVideo(${i})" title="${escHtml(v.title)}"></div>
   `).join('');
 }
 
-// ── STATS ────────────────────────────────────────────────────────────────────
 function updateStats() {
-  const total = playlist.length;
-  const watched = playlist.filter(v => v.watched).length;
+  const videos = getVideos();
+  const total = videos.length;
+  const watched = videos.filter(v => v.watched).length;
   const left = total - watched;
   const pct = total ? Math.round((watched / total) * 100) : 0;
+
   document.getElementById('statTotal').textContent = total;
   document.getElementById('statWatched').textContent = watched;
   document.getElementById('statLeft').textContent = left;
   document.getElementById('statPct').textContent = pct + '%';
-  // Stats view
   document.getElementById('statsWatchedLarge').textContent = watched;
+
+  // Time calculations
+  const totalSec = videos.reduce((s, v) => s + (v.durationSec || 0), 0);
+  const watchedSec = videos.filter(v => v.watched).reduce((s, v) => s + (v.durationSec || 0), 0);
+  const remainingSec = totalSec - watchedSec;
+  const hasDurations = videos.some(v => v.durationSec > 0);
+
+  document.getElementById('statsTotalTime').textContent = hasDurations ? formatDuration(totalSec) : '—';
+  document.getElementById('statsRemainingTime').textContent = hasDurations ? formatDuration(remainingSec) : '—';
+
+  // Time left label in queue header
+  const tlEl = document.getElementById('queueTimeLeft');
+  if (hasDurations && remainingSec > 0) {
+    tlEl.textContent = formatDuration(remainingSec) + ' left';
+  } else {
+    tlEl.textContent = '';
+  }
 }
 
-// ── TIMER ────────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// TIMER
+// ══════════════════════════════════════════════════════════════════════════════
 function startTimerInterval() {
   setInterval(() => {
     if (ytPlayer && playerReady) {
@@ -840,7 +1235,6 @@ function startTimerInterval() {
     }
   }, 1000);
 }
-
 function updateTimer() {
   const m = Math.floor(sessionSeconds / 60).toString().padStart(2, '0');
   const s = (sessionSeconds % 60).toString().padStart(2, '0');
@@ -849,7 +1243,9 @@ function updateTimer() {
   document.getElementById('statsTimerLarge').textContent = str;
 }
 
-// ── GOAL ─────────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// GOAL
+// ══════════════════════════════════════════════════════════════════════════════
 function openGoalModal() {
   document.getElementById('goalInput').value = dailyGoal || '';
   document.getElementById('goalModal').classList.add('open');
@@ -865,9 +1261,8 @@ function saveGoal() {
   closeGoalModal();
   showToast(`🎯 Goal set: ${dailyGoal} videos`, 'success');
 }
-
 function updateGoalUI() {
-  const watched = playlist.filter(v => v.watched).length;
+  const watched = getVideos().filter(v => v.watched).length;
   const goalStatus = document.getElementById('goalStatus');
   const goalBtn = document.getElementById('goalBtn');
   const goalDisplay = document.getElementById('goalDisplay');
@@ -887,18 +1282,23 @@ function updateGoalUI() {
   goalBtn.textContent = met ? '🎯 Goal Met!' : `Goal: ${dailyGoal}`;
   goalBtn.className = 'goal-badge' + (met ? ' goal-met' : '');
   goalDisplay.innerHTML = met
-    ? `<span style="color:#6abf6a">🎯 Goal met! ${watched}/${dailyGoal} videos watched.</span>`
-    : `<span style="color:var(--text)">${watched} / ${dailyGoal}</span> <span style="color:var(--muted)">videos watched</span>`;
+    ? `<span style="color:#6abf6a">🎯 Goal met! ${watched} / ${dailyGoal} watched.</span>`
+    : `<span style="color:var(--text)">${watched} / ${dailyGoal}</span> <span style="color:var(--muted)"> videos watched</span>`;
   const pct = Math.min(100, Math.round((watched / dailyGoal) * 100));
   goalBarFill.style.width = pct + '%';
 }
 
-// ── PERSIST ──────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// PERSIST
+// ══════════════════════════════════════════════════════════════════════════════
 function savePersist() {
-  localStorage.setItem(KEY_PLAYLIST, JSON.stringify(playlist));
+  localStorage.setItem(KEY_PLAYLISTS, JSON.stringify(playlists));
+  localStorage.setItem(KEY_ACTIVE_PL, activePLId);
 }
 
-// ── TOAST ────────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════════════════════════
 let toastTimer;
 function showToast(msg, type = '') {
   const t = document.getElementById('toast');
@@ -908,61 +1308,38 @@ function showToast(msg, type = '') {
   toastTimer = setTimeout(() => t.className = 'toast', 2500);
 }
 
-// ── TIMESTAMPS (auto-fetch via YouTube Data API) ─────────────────────────────
-const YT_API_KEY = 'AIzaSyCDAskn-atleKjmh_RcMXTbjz1l88kMqdA';
-let chapters = [];
-let chapterTrackInterval = null;
-
+// ══════════════════════════════════════════════════════════════════════════════
+// TIMESTAMPS
+// ══════════════════════════════════════════════════════════════════════════════
 async function fetchTimestamps(videoId, videoTitle) {
   const listEl = document.getElementById('timestampsList');
   const labelEl = document.getElementById('tsVideoLabel');
   const countEl = document.getElementById('tabTsCount');
 
-  // Reset
   chapters = [];
   countEl.style.opacity = '0';
-  labelEl.innerHTML = videoTitle
-    ? `<span>${videoTitle}</span>`
-    : 'Loading…';
-
-  // Loading state
+  labelEl.innerHTML = videoTitle ? `<span>${escHtml(videoTitle)}</span>` : 'Loading…';
   listEl.innerHTML = `<div class="ts-loading"><div class="spinner"></div>Fetching timestamps…</div>`;
 
   try {
-    const res = await fetch(
-      `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${YT_API_KEY}`
-    );
+    const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${YT_API_KEY}`);
     if (!res.ok) throw new Error('API error ' + res.status);
     const data = await res.json();
-    const item = data.items && data.items[0];
+    const item = data.items?.[0];
     if (!item) throw new Error('Video not found');
 
-    const description = item.snippet.description || '';
-    const parsed = parseTimestampsFromText(description);
-
+    const parsed = parseTimestampsFromText(item.snippet.description || '');
     if (!parsed.length) {
-      listEl.innerHTML = `
-        <div class="ts-state">
-          <div class="ts-state-icon">🕳</div>
-          <p>No timestamps found<br>for this video.</p>
-          <span class="ts-sub">The creator hasn't added chapters to the description.</span>
-        </div>`;
+      listEl.innerHTML = `<div class="ts-state"><div class="ts-state-icon">🕳</div><p>No timestamps found.</p><span class="ts-sub">Creator hasn't added chapters.</span></div>`;
       return;
     }
-
     chapters = parsed;
     countEl.textContent = chapters.length;
     countEl.style.opacity = '1';
     renderTimestamps();
     startChapterTracking();
-
   } catch (err) {
-    listEl.innerHTML = `
-      <div class="ts-state">
-        <div class="ts-state-icon">⚠</div>
-        <p>Couldn't load timestamps.</p>
-        <span class="ts-sub">${err.message}</span>
-      </div>`;
+    listEl.innerHTML = `<div class="ts-state"><div class="ts-state-icon">⚠</div><p>Couldn't load timestamps.</p><span class="ts-sub">${escHtml(err.message)}</span></div>`;
   }
 }
 
@@ -977,7 +1354,7 @@ function parseTimestampsFromText(text) {
     const parts = timeStr.split(':').map(Number);
     let seconds = 0;
     if (parts.length === 3) seconds = parts[0]*3600 + parts[1]*60 + parts[2];
-    else if (parts.length === 2) seconds = parts[0]*60 + parts[1];
+    else seconds = parts[0]*60 + (parts[1]||0);
     const name = line.replace(match[0], '').trim().replace(/^[-–—•·]\s*/, '').trim();
     if (name) parsed.push({ time: seconds, label: timeStr, name });
   }
@@ -985,45 +1362,41 @@ function parseTimestampsFromText(text) {
 }
 
 function renderTimestamps() {
-  const el = document.getElementById('timestampsList');
-  if (!chapters.length) return;
-  el.innerHTML = chapters.map((c, i) => `
+  document.getElementById('timestampsList').innerHTML = chapters.map((c, i) => `
     <button class="chapter-btn" id="chap-${i}" onclick="seekToChapter(${c.time})">
       <span class="chapter-time">${c.label}</span>
-      <span class="chapter-name">${c.name}</span>
+      <span class="chapter-name">${escHtml(c.name)}</span>
     </button>
   `).join('');
 }
 
-function seekToChapter(seconds) {
+function seekToChapter(sec) {
   if (!ytPlayer || !playerReady) return;
-  ytPlayer.seekTo(seconds, true);
-  ytPlayer.playVideo();
+  ytPlayer.seekTo(sec, true); ytPlayer.playVideo();
   highlightCurrentChapter();
 }
-
 function startChapterTracking() {
   clearInterval(chapterTrackInterval);
-  chapterTrackInterval = setInterval(() => {
-    if (!ytPlayer || !playerReady) return;
-    try { highlightCurrentChapter(); } catch {}
-  }, 1000);
+  chapterTrackInterval = setInterval(() => { if (ytPlayer && playerReady) { try { highlightCurrentChapter(); } catch {} } }, 1000);
 }
-
 function highlightCurrentChapter() {
   if (!chapters.length || !ytPlayer || !playerReady) return;
-  let current = 0;
-  try { current = ytPlayer.getCurrentTime(); } catch { return; }
+  let cur = 0; try { cur = ytPlayer.getCurrentTime(); } catch { return; }
   let activeIdx = -1;
-  for (let i = chapters.length - 1; i >= 0; i--) {
-    if (current >= chapters[i].time) { activeIdx = i; break; }
-  }
-  document.querySelectorAll('.chapter-btn').forEach((btn, i) => {
-    btn.classList.toggle('active', i === activeIdx);
-  });
+  for (let i = chapters.length - 1; i >= 0; i--) { if (cur >= chapters[i].time) { activeIdx = i; break; } }
+  document.querySelectorAll('.chapter-btn').forEach((btn, i) => btn.classList.toggle('active', i === activeIdx));
 }
 
-// ── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════════════════════
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// KEYBOARD + CLOSE HANDLERS
+// ══════════════════════════════════════════════════════════════════════════════
 document.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   if (e.key === 'ArrowRight') playNext();
@@ -1031,8 +1404,15 @@ document.addEventListener('keydown', e => {
   if (e.key === 'w' || e.key === 'W') markWatched();
 });
 
-document.getElementById('goalModal').addEventListener('click', function(e) {
-  if (e.target === this) closeGoalModal();
+// Close dropdown when clicking outside
+document.addEventListener('click', e => {
+  if (plDropdownOpen && !document.getElementById('plBar').contains(e.target)) closePlDropdown();
+});
+
+['goalModal','newPlModal','renamePlModal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
 });
 
 // ── START ─────────────────────────────────────────────────────────────────────
