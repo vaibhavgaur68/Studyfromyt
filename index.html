@@ -82,6 +82,9 @@
   .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
   .btn:disabled { opacity: .3; cursor: not-allowed; }
   .btn-skip { margin-left: auto; font-size: 11px; padding: 8px 12px; }
+  /* FIX: auto-advance button style — .on highlights it as active */
+  .btn-auto { font-size: 11px; padding: 8px 12px; }
+  .btn-auto.on { color: var(--accent); border-color: var(--accent); background: rgba(232,197,71,.08); }
 
   /* ── QUEUE SIDE ── */
   .queue-side { display: flex; flex-direction: column; overflow: hidden; background: var(--surface); }
@@ -328,19 +331,6 @@
   .modal input:focus { border-color: var(--accent); }
   .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
 
-  /* playlists modal list */
-  .pl-modal-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; max-height: 240px; overflow-y: auto; }
-  .pl-modal-item {
-    display: flex; align-items: center; gap: 8px; padding: 9px 12px;
-    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
-    cursor: pointer; transition: all .15s;
-  }
-  .pl-modal-item:hover { border-color: var(--border); background: #202022; }
-  .pl-modal-item.current { border-color: var(--accent); background: #1e1b0e; }
-  .pl-modal-item-name { flex: 1; font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .pl-modal-item-count { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
-  .pl-modal-item-actions { display: flex; gap: 3px; }
-
   /* import progress bar */
   .import-progress {
     position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);
@@ -418,6 +408,8 @@
       <button class="btn btn-primary" id="markBtn" onclick="markWatched()" disabled>✓ Mark Watched</button>
       <button class="btn btn-ghost" id="nextBtn" onclick="playNext()" disabled>Next →</button>
       <button class="btn btn-ghost btn-skip" id="skipBtn" onclick="skipVideo()" disabled>⤷ Skip</button>
+      <!-- FIX: auto-advance toggle now has a real UI button -->
+      <button class="btn btn-ghost btn-auto on" id="autoBtn" onclick="toggleAutoAdvance()" title="Toggle auto-advance">⤷ Auto</button>
     </div>
   </div>
 
@@ -431,7 +423,6 @@
         <span class="pl-arrow" id="plArrow">▼</span>
       </button>
       <button class="pl-new-btn" onclick="openNewPlaylistModal()">+ New</button>
-      <!-- DROPDOWN -->
       <div class="pl-dropdown" id="plDropdown"></div>
     </div>
 
@@ -446,7 +437,8 @@
       <button class="panel-tab" id="tabStats" onclick="switchTab('stats')">
         Stats
       </button>
-      <button class="add-trigger" id="addTrigger" onclick="toggleAddRow()" title="Add video or playlist">+</button>
+      <!-- title hint updated to show / shortcut -->
+      <button class="add-trigger" id="addTrigger" onclick="toggleAddRow()" title="Add video or playlist (/)">+</button>
     </div>
 
     <!-- ADD ROW -->
@@ -464,10 +456,13 @@
       <div class="queue-header-bar">
         <div class="queue-header-top">
           <span class="queue-label">Up Next</span>
+          <!-- FIX: was missing — caused renderPlaylist() crash -->
+          <span class="queue-count" id="queueCount"></span>
           <span class="queue-time-left" id="queueTimeLeft"></span>
           <button class="icon-btn" id="filterBtn" onclick="toggleWatchedFilter()" title="Toggle unwatched only">👁</button>
           <button class="icon-btn" id="searchBtn" onclick="toggleSearch()" title="Search queue">🔍</button>
-          <button class="clear-btn" onclick="clearAll()">Clear</button>
+          <!-- FIX: calls confirmClearAll() instead of native confirm() -->
+          <button class="clear-btn" onclick="confirmClearAll()">Clear</button>
         </div>
         <div class="search-row" id="searchRow">
           <input class="search-input" id="searchInput" placeholder="Search queue…" oninput="onSearchInput()">
@@ -545,6 +540,8 @@
           <div class="kbd-row"><span>Next video</span><kbd>→</kbd></div>
           <div class="kbd-row"><span>Prev video</span><kbd>←</kbd></div>
           <div class="kbd-row"><span>Mark watched</span><kbd>W</kbd></div>
+          <!-- FIX: new / shortcut documented here -->
+          <div class="kbd-row"><span>Add video</span><kbd>/</kbd></div>
         </div>
 
       </div>
@@ -592,6 +589,19 @@
   </div>
 </div>
 
+<!-- FIX: custom confirm modal replaces native window.confirm() everywhere -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <h3 id="confirmTitle">Are you sure?</h3>
+    <p id="confirmMsg">This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeConfirmModal()">Cancel</button>
+      <button class="btn btn-primary" id="confirmOkBtn"
+        style="background:var(--danger);border-color:var(--danger);color:#fff">Delete</button>
+    </div>
+  </div>
+</div>
+
 <!-- IMPORT PROGRESS -->
 <div class="import-progress" id="importProgress">
   <div class="import-progress-label">
@@ -610,22 +620,25 @@
 // ══════════════════════════════════════════════════════════════════════════════
 const YT_API_KEY = 'AIzaSyCDAskn-atleKjmh_RcMXTbjz1l88kMqdA';
 
-let playlists = [];      // [{id, name, videos:[{id,title,thumb,watched,duration,durationSec}]}]
+let playlists = [];
 let activePLId = '';
 let currentIndex = -1;
 let ytPlayer = null, playerReady = false;
-let sessionSeconds = 0, dailyGoal = 0;
+let sessionSeconds = 0, dailyGoal = 0, dailyWatchedCount = 0; // FIX: added dailyWatchedCount
 let autoAdvance = true;
 let addRowOpen = false, activeTab = 'queue';
 let searchQuery = '', showUnwatchedOnly = false;
 let plDropdownOpen = false;
 let renamingPLId = null;
 let chapters = [], chapterTrackInterval = null;
+let timerInterval = null;      // FIX: store interval so it can be cleared
+let confirmCallback = null;    // FIX: for custom confirm modal
 
-const KEY_PLAYLISTS = 'queue_playlists_v2';
-const KEY_ACTIVE_PL = 'queue_active_pl';
-const KEY_GOAL      = 'queue_goal';
-const KEY_SESSION   = 'queue_session_' + new Date().toDateString();
+const KEY_PLAYLISTS     = 'queue_playlists_v2';
+const KEY_ACTIVE_PL     = 'queue_active_pl';
+const KEY_GOAL          = 'queue_goal';
+const KEY_SESSION       = 'queue_session_'        + new Date().toDateString();
+const KEY_DAILY_WATCHED = 'queue_daily_watched_'  + new Date().toDateString(); // FIX: daily key
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function getVideos() {
@@ -639,7 +652,6 @@ function uid() { return 'pl_' + Math.random().toString(36).slice(2,9); }
 // INIT
 // ══════════════════════════════════════════════════════════════════════════════
 function init() {
-  // Load playlists
   const raw = localStorage.getItem(KEY_PLAYLISTS);
   if (raw) {
     try { playlists = JSON.parse(raw); } catch { playlists = []; }
@@ -651,8 +663,9 @@ function init() {
   activePLId = localStorage.getItem(KEY_ACTIVE_PL) || playlists[0].id;
   if (!playlists.find(p => p.id === activePLId)) activePLId = playlists[0].id;
 
-  sessionSeconds = parseInt(localStorage.getItem(KEY_SESSION) || '0');
-  dailyGoal = parseInt(localStorage.getItem(KEY_GOAL) || '0');
+  sessionSeconds    = parseInt(localStorage.getItem(KEY_SESSION)        || '0');
+  dailyGoal         = parseInt(localStorage.getItem(KEY_GOAL)           || '0');
+  dailyWatchedCount = parseInt(localStorage.getItem(KEY_DAILY_WATCHED)  || '0'); // FIX
 
   updatePlBar();
   renderPlaylist();
@@ -689,6 +702,36 @@ function onPlayerStateChange(e) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// FIX: extracted helper — same 4-line reset was copy-pasted 3 times before
+// ══════════════════════════════════════════════════════════════════════════════
+function resetPlayerUI() {
+  document.getElementById('emptyPlayer').style.display = 'flex';
+  document.getElementById('ytPlayer').style.display = 'none';
+  document.getElementById('videoInfo').style.display = 'none';
+  ['prevBtn','nextBtn','markBtn','skipBtn'].forEach(id => document.getElementById(id).disabled = true);
+  if (ytPlayer && playerReady) { try { ytPlayer.stopVideo(); } catch {} }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// FIX: custom confirm modal — replaces native window.confirm() everywhere
+// ══════════════════════════════════════════════════════════════════════════════
+function showConfirm(title, msg, okLabel, onOk) {
+  confirmCallback = onOk;
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').textContent = msg;
+  document.getElementById('confirmOkBtn').textContent = okLabel || 'Confirm';
+  document.getElementById('confirmModal').classList.add('open');
+}
+function closeConfirmModal() {
+  document.getElementById('confirmModal').classList.remove('open');
+  confirmCallback = null;
+}
+function executeConfirm() {
+  closeConfirmModal();
+  if (typeof confirmCallback === 'function') confirmCallback();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // PLAYLIST MANAGEMENT
 // ══════════════════════════════════════════════════════════════════════════════
 function updatePlBar() {
@@ -719,7 +762,7 @@ function renderPlDropdown() {
       <div class="pl-item-actions" onclick="event.stopPropagation()">
         <button class="pl-icon-btn" onclick="openRenamePLModal('${pl.id}')" title="Rename">✏️</button>
         ${playlists.length > 1
-          ? `<button class="pl-icon-btn del" onclick="deletePlaylist('${pl.id}')" title="Delete">✕</button>`
+          ? `<button class="pl-icon-btn del" onclick="confirmDeletePlaylist('${pl.id}')" title="Delete">✕</button>`
           : ''}
       </div>
     </div>
@@ -732,13 +775,7 @@ function switchPlaylist(id) {
   currentIndex = -1;
   localStorage.setItem(KEY_ACTIVE_PL, activePLId);
   closePlDropdown();
-  // Reset player
-  document.getElementById('emptyPlayer').style.display = 'flex';
-  document.getElementById('ytPlayer').style.display = 'none';
-  document.getElementById('videoInfo').style.display = 'none';
-  ['prevBtn','nextBtn','markBtn','skipBtn'].forEach(id => document.getElementById(id).disabled = true);
-  if (ytPlayer && playerReady) { try { ytPlayer.stopVideo(); } catch {} }
-  // Reset timestamps
+  resetPlayerUI(); // FIX: was 4 lines of repeated code
   chapters = [];
   document.getElementById('timestampsList').innerHTML = `<div class="ts-state"><div class="ts-state-icon">📍</div><p>Timestamps appear here<br>when a video is loaded.</p></div>`;
   document.getElementById('tsVideoLabel').textContent = 'No video playing';
@@ -787,14 +824,18 @@ function confirmRenamePlaylist() {
   showToast('✓ Renamed', 'success');
 }
 
-function deletePlaylist(id) {
+// FIX: replaced window.confirm() with custom dark-themed modal
+function confirmDeletePlaylist(id) {
   if (playlists.length <= 1) return;
   const pl = playlists.find(p => p.id === id);
-  if (!confirm(`Delete "${pl?.name}"? This cannot be undone.`)) return;
-  playlists = playlists.filter(p => p.id !== id);
-  savePersist();
-  if (activePLId === id) switchPlaylist(playlists[0].id);
-  else { renderPlDropdown(); }
+  closePlDropdown();
+  showConfirm('🗑 Delete Playlist', `Delete "${pl?.name}"? This cannot be undone.`, 'Delete', () => {
+    playlists = playlists.filter(p => p.id !== id);
+    savePersist();
+    if (activePLId === id) switchPlaylist(playlists[0].id);
+    else renderPlDropdown();
+    showToast('✓ Playlist deleted', 'success');
+  });
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -814,8 +855,10 @@ function extractVideoId(input) {
   return null;
 }
 
+// FIX: was /PL[A-Za-z0-9_-]+/ — only matched PL... IDs.
+// Now matches all YouTube playlist types: PL, UU, LL, FL, RD, OL, etc.
 function extractPlaylistId(input) {
-  const m = input.match(/[?&]list=(PL[A-Za-z0-9_-]+)/);
+  const m = input.match(/[?&]list=([A-Za-z0-9_-]+)/);
   return m ? m[1] : null;
 }
 
@@ -850,7 +893,7 @@ async function handleAdd() {
   updateStats();
   savePersist();
 
-  // Fetch title + duration
+  // Fetch title + duration with proper fallback on any failure
   try {
     const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${vid}&key=${YT_API_KEY}`);
     if (res.ok) {
@@ -861,13 +904,19 @@ async function handleAdd() {
         const dur = parseDuration(item.contentDetails?.duration || '');
         video.duration = dur.formatted;
         video.durationSec = dur.seconds;
-        savePersist();
-        renderPlaylist();
-        updateStats();
+      } else {
+        video.title = `Video (${vid})`; // FIX: no longer stuck on "Loading…"
       }
+    } else {
+      video.title = `Video (${vid})`; // FIX: handles quota exceeded / 403 etc.
     }
-  } catch {}
+  } catch {
+    video.title = `Video (${vid})`; // FIX: handles network errors
+  }
 
+  savePersist();
+  renderPlaylist();
+  updateStats();
   showToast('✓ Added to queue', 'success');
   if (currentIndex === -1) playVideo(0);
 }
@@ -880,7 +929,6 @@ async function importPlaylist(playlistId) {
   let pageToken = '';
   let fetched = 0;
 
-  // Step 1: collect all video IDs from playlistItems (max 200)
   try {
     do {
       const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=${playlistId}&maxResults=50&key=${YT_API_KEY}${pageToken ? '&pageToken=' + pageToken : ''}`;
@@ -905,7 +953,6 @@ async function importPlaylist(playlistId) {
     return;
   }
 
-  // Step 2: filter out already-added IDs
   const videos = getVideos();
   const existingIds = new Set(videos.map(v => v.id));
   videoIds = videoIds.filter(id => !existingIds.has(id));
@@ -916,7 +963,6 @@ async function importPlaylist(playlistId) {
     return;
   }
 
-  // Step 3: batch fetch titles + durations (50 per request)
   let added = 0;
   const total = videoIds.length;
   const chunks = [];
@@ -941,12 +987,14 @@ async function importPlaylist(playlistId) {
         added++;
       }
       savePersist();
-      renderPlaylist();
-      updateStats();
       updateImportProgress(`Adding videos…`, added, total);
+      // FIX: renderPlaylist() removed from inside loop — was re-rendering on every chunk
     } catch {}
   }
 
+  // Single render after all chunks complete
+  renderPlaylist();
+  updateStats();
   hideImportProgress();
   showToast(`✓ Imported ${added} video${added !== 1 ? 's' : ''}`, 'success');
   if (currentIndex === -1 && getVideos().length > 0) playVideo(0);
@@ -1009,6 +1057,13 @@ function toggleAddRow(forceState) {
     if (activeTab !== 'queue') switchTab('queue');
     closePlDropdown();
   }
+}
+
+// FIX: auto-advance now has a real toggle function wired to the button
+function toggleAutoAdvance() {
+  autoAdvance = !autoAdvance;
+  document.getElementById('autoBtn').classList.toggle('on', autoAdvance);
+  showToast(autoAdvance ? '⤷ Auto-advance on' : '⤷ Auto-advance off', '');
 }
 
 function toggleWatchedFilter() {
@@ -1079,6 +1134,15 @@ function markWatched() {
   if (currentIndex === -1) return;
   const v = getVideos()[currentIndex];
   v.watched = !v.watched;
+
+  // FIX: track daily count separately so goal reflects today only, not all-time
+  if (v.watched) {
+    dailyWatchedCount++;
+  } else {
+    dailyWatchedCount = Math.max(0, dailyWatchedCount - 1);
+  }
+  try { localStorage.setItem(KEY_DAILY_WATCHED, dailyWatchedCount); } catch {}
+
   savePersist();
   renderPlaylist();
   updateProgress();
@@ -1095,14 +1159,13 @@ function markWatched() {
 // ══════════════════════════════════════════════════════════════════════════════
 function renderPlaylist() {
   const el = document.getElementById('playlist');
-  const cnt = document.getElementById('queueCount');
+  const cnt = document.getElementById('queueCount'); // FIX: element now exists in HTML
   const tabCnt = document.getElementById('tabQueueCount');
   const allVideos = getVideos();
 
   tabCnt.textContent = allVideos.length;
   cnt.textContent = `${allVideos.length} video${allVideos.length !== 1 ? 's' : ''}`;
 
-  // Apply filters
   let displayed = allVideos.map((v, i) => ({ ...v, origIndex: i }));
   if (showUnwatchedOnly) displayed = displayed.filter(v => !v.watched);
   if (searchQuery) displayed = displayed.filter(v => v.title.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -1141,12 +1204,7 @@ function removeVideo(e, index) {
   if (currentIndex === index) {
     currentIndex = -1;
     if (videos.length > 0) playVideo(Math.min(index, videos.length - 1));
-    else {
-      document.getElementById('emptyPlayer').style.display = 'flex';
-      document.getElementById('ytPlayer').style.display = 'none';
-      document.getElementById('videoInfo').style.display = 'none';
-      ['prevBtn','nextBtn','markBtn','skipBtn'].forEach(id => document.getElementById(id).disabled = true);
-    }
+    else resetPlayerUI(); // FIX: was 4 lines of repeated code
   } else if (currentIndex > index) {
     currentIndex--;
   }
@@ -1156,21 +1214,20 @@ function removeVideo(e, index) {
   updateStats();
 }
 
-function clearAll() {
+// FIX: replaced window.confirm() with custom dark modal
+function confirmClearAll() {
   const videos = getVideos();
   if (!videos.length) return;
-  if (!confirm('Clear this entire queue?')) return;
-  getActivePL().videos = [];
-  currentIndex = -1;
-  document.getElementById('emptyPlayer').style.display = 'flex';
-  document.getElementById('ytPlayer').style.display = 'none';
-  document.getElementById('videoInfo').style.display = 'none';
-  ['prevBtn','nextBtn','markBtn','skipBtn'].forEach(id => document.getElementById(id).disabled = true);
-  if (ytPlayer && playerReady) { try { ytPlayer.stopVideo(); } catch {} }
-  savePersist();
-  renderPlaylist();
-  updateProgress();
-  updateStats();
+  showConfirm('🗑 Clear Queue', 'Clear this entire queue? This cannot be undone.', 'Clear All', () => {
+    getActivePL().videos = [];
+    currentIndex = -1;
+    chapters = [];
+    resetPlayerUI(); // FIX: was 4 lines of repeated code
+    savePersist();
+    renderPlaylist();
+    updateProgress();
+    updateStats();
+  });
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1201,7 +1258,6 @@ function updateStats() {
   document.getElementById('statPct').textContent = pct + '%';
   document.getElementById('statsWatchedLarge').textContent = watched;
 
-  // Time calculations
   const totalSec = videos.reduce((s, v) => s + (v.durationSec || 0), 0);
   const watchedSec = videos.filter(v => v.watched).reduce((s, v) => s + (v.durationSec || 0), 0);
   const remainingSec = totalSec - watchedSec;
@@ -1210,25 +1266,21 @@ function updateStats() {
   document.getElementById('statsTotalTime').textContent = hasDurations ? formatDuration(totalSec) : '—';
   document.getElementById('statsRemainingTime').textContent = hasDurations ? formatDuration(remainingSec) : '—';
 
-  // Time left label in queue header
   const tlEl = document.getElementById('queueTimeLeft');
-  if (hasDurations && remainingSec > 0) {
-    tlEl.textContent = formatDuration(remainingSec) + ' left';
-  } else {
-    tlEl.textContent = '';
-  }
+  tlEl.textContent = (hasDurations && remainingSec > 0) ? formatDuration(remainingSec) + ' left' : '';
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
 // TIMER
 // ══════════════════════════════════════════════════════════════════════════════
 function startTimerInterval() {
-  setInterval(() => {
+  if (timerInterval) clearInterval(timerInterval); // FIX: prevent stacking duplicate intervals
+  timerInterval = setInterval(() => {              // FIX: store reference so it can be cleared
     if (ytPlayer && playerReady) {
       try {
         if (ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
           sessionSeconds++;
-          localStorage.setItem(KEY_SESSION, sessionSeconds);
+          try { localStorage.setItem(KEY_SESSION, sessionSeconds); } catch {} // FIX: try-catch
           updateTimer();
         }
       } catch {}
@@ -1256,15 +1308,14 @@ function saveGoal() {
   const val = parseInt(document.getElementById('goalInput').value);
   if (!val || val < 1) return;
   dailyGoal = val;
-  localStorage.setItem(KEY_GOAL, dailyGoal);
+  try { localStorage.setItem(KEY_GOAL, dailyGoal); } catch {} // FIX: try-catch
   updateGoalUI();
   closeGoalModal();
   showToast(`🎯 Goal set: ${dailyGoal} videos`, 'success');
 }
 function updateGoalUI() {
-  const watched = getVideos().filter(v => v.watched).length;
-  const goalStatus = document.getElementById('goalStatus');
-  const goalBtn = document.getElementById('goalBtn');
+  const goalStatus  = document.getElementById('goalStatus');
+  const goalBtn     = document.getElementById('goalBtn');
   const goalDisplay = document.getElementById('goalDisplay');
   const goalBarFill = document.getElementById('goalBarFill');
 
@@ -1276,24 +1327,31 @@ function updateGoalUI() {
     goalBtn.className = 'goal-badge';
     return;
   }
+
+  // FIX: was getVideos().filter(v => v.watched).length — counted ALL-TIME watched.
+  // Now uses dailyWatchedCount which resets every day (same key pattern as session timer).
   goalStatus.style.display = 'flex';
-  document.getElementById('goalProgress').textContent = `${watched}/${dailyGoal}`;
-  const met = watched >= dailyGoal;
+  document.getElementById('goalProgress').textContent = `${dailyWatchedCount}/${dailyGoal}`;
+  const met = dailyWatchedCount >= dailyGoal;
   goalBtn.textContent = met ? '🎯 Goal Met!' : `Goal: ${dailyGoal}`;
   goalBtn.className = 'goal-badge' + (met ? ' goal-met' : '');
   goalDisplay.innerHTML = met
-    ? `<span style="color:#6abf6a">🎯 Goal met! ${watched} / ${dailyGoal} watched.</span>`
-    : `<span style="color:var(--text)">${watched} / ${dailyGoal}</span> <span style="color:var(--muted)"> videos watched</span>`;
-  const pct = Math.min(100, Math.round((watched / dailyGoal) * 100));
+    ? `<span style="color:#6abf6a">🎯 Goal met! ${dailyWatchedCount} / ${dailyGoal} watched today.</span>`
+    : `<span style="color:var(--text)">${dailyWatchedCount} / ${dailyGoal}</span> <span style="color:var(--muted)"> videos watched today</span>`;
+  const pct = Math.min(100, Math.round((dailyWatchedCount / dailyGoal) * 100));
   goalBarFill.style.width = pct + '%';
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// PERSIST
+// PERSIST — FIX: wrapped in try-catch for private/incognito/full-storage safety
 // ══════════════════════════════════════════════════════════════════════════════
 function savePersist() {
-  localStorage.setItem(KEY_PLAYLISTS, JSON.stringify(playlists));
-  localStorage.setItem(KEY_ACTIVE_PL, activePLId);
+  try {
+    localStorage.setItem(KEY_PLAYLISTS, JSON.stringify(playlists));
+    localStorage.setItem(KEY_ACTIVE_PL, activePLId);
+  } catch (e) {
+    showToast('⚠ Could not save (storage full?)', 'error');
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1312,7 +1370,7 @@ function showToast(msg, type = '') {
 // TIMESTAMPS
 // ══════════════════════════════════════════════════════════════════════════════
 async function fetchTimestamps(videoId, videoTitle) {
-  const listEl = document.getElementById('timestampsList');
+  const listEl  = document.getElementById('timestampsList');
   const labelEl = document.getElementById('tsVideoLabel');
   const countEl = document.getElementById('tabTsCount');
 
@@ -1402,18 +1460,22 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') playNext();
   if (e.key === 'ArrowLeft') playPrev();
   if (e.key === 'w' || e.key === 'W') markWatched();
+  if (e.key === '/') { e.preventDefault(); toggleAddRow(); } // FIX: new / shortcut to open add row
 });
 
-// Close dropdown when clicking outside
 document.addEventListener('click', e => {
   if (plDropdownOpen && !document.getElementById('plBar').contains(e.target)) closePlDropdown();
 });
 
-['goalModal','newPlModal','renamePlModal'].forEach(id => {
+// FIX: confirmModal added to list
+['goalModal','newPlModal','renamePlModal','confirmModal'].forEach(id => {
   document.getElementById(id).addEventListener('click', function(e) {
     if (e.target === this) this.classList.remove('open');
   });
 });
+
+// FIX: confirm OK button wired via addEventListener to avoid closure issues with inline onclick
+document.getElementById('confirmOkBtn').addEventListener('click', executeConfirm);
 
 // ── START ─────────────────────────────────────────────────────────────────────
 loadYTAPI();
