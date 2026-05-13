@@ -590,7 +590,17 @@ function onPlayerStateChange(e) {
 function extractVideoId(input) {
   input = input.trim();
   const patterns = [
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/,
+    // Standard watch URL: youtube.com/watch?v=ID  (also handles &t=, &si=, etc.)
+    /[?&]v=([A-Za-z0-9_-]{11})/,
+    // Short URL: youtu.be/ID
+    /youtu\.be\/([A-Za-z0-9_-]{11})/,
+    // Shorts: youtube.com/shorts/ID
+    /youtube\.com\/shorts\/([A-Za-z0-9_-]{11})/,
+    // Live: youtube.com/live/ID
+    /youtube\.com\/live\/([A-Za-z0-9_-]{11})/,
+    // Embed: youtube.com/embed/ID  or  youtube-nocookie.com/embed/ID
+    /youtube(?:-nocookie)?\.com\/(?:embed|v)\/([A-Za-z0-9_-]{11})/,
+    // Raw 11-char ID (no slashes/dots around it)
     /^([A-Za-z0-9_-]{11})$/
   ];
   for (const p of patterns) {
