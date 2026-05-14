@@ -633,12 +633,14 @@ let renamingPLId = null;
 let chapters = [], chapterTrackInterval = null;
 let timerInterval = null;      // FIX: store interval so it can be cleared
 let confirmCallback = null;    // FIX: for custom confirm modal
+let saveResumeInterval = null; // interval that periodically saves playback position
 
 const KEY_PLAYLISTS     = 'queue_playlists_v2';
 const KEY_ACTIVE_PL     = 'queue_active_pl';
 const KEY_GOAL          = 'queue_goal';
 const KEY_SESSION       = 'queue_session_'        + new Date().toDateString();
 const KEY_DAILY_WATCHED = 'queue_daily_watched_'  + new Date().toDateString(); // FIX: daily key
+const KEY_RESUME        = 'queue_resume_v1'; // persisted playback position for resume-on-reopen
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function getVideos() {
@@ -674,6 +676,18 @@ function init() {
   updateGoalUI();
   updateTimer();
   startTimerInterval();
+
+  // Resume last video position after a short delay (player needs to initialise)
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY_RESUME) || 'null');
+    if (saved && saved.plId === activePLId) {
+      const idx = getVideos().findIndex(v => v.id === saved.videoId);
+      if (idx !== -1) {
+        // small delay so the YT iframe has time to register
+        setTimeout(() => playVideo(idx), 300);
+      }
+    }
+  } catch {}
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -696,6 +710,7 @@ function onYouTubeIframeAPIReady() {
 }
 function onPlayerStateChange(e) {
   if (e.data === YT.PlayerState.ENDED && autoAdvance) {
+    clearResumeState(); // video finished — no need to resume it next time
     markWatched();
     setTimeout(() => playNext(), 800);
   }
@@ -1094,17 +1109,41 @@ function playVideo(index) {
   currentIndex = index;
   const video = videos[index];
 
+  // ── Resume: check for a saved position for this exact video ──────────────
+  let resumeAt = 0;
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY_RESUME) || 'null');
+    if (saved && saved.plId === activePLId && saved.videoId === video.id) {
+      resumeAt = saved.position || 0;
+    }
+  } catch {}
+
   document.getElementById('emptyPlayer').style.display = 'none';
   document.getElementById('ytPlayer').style.display = 'block';
   document.getElementById('videoInfo').style.display = 'block';
 
+  const loadArgs = resumeAt > 3
+    ? { videoId: video.id, startSeconds: resumeAt }
+    : video.id;
+
   if (playerReady) {
-    ytPlayer.loadVideoById(video.id);
+    ytPlayer.loadVideoById(loadArgs);
   } else {
     const check = setInterval(() => {
-      if (playerReady) { clearInterval(check); ytPlayer.loadVideoById(video.id); }
+      if (playerReady) { clearInterval(check); ytPlayer.loadVideoById(loadArgs); }
     }, 200);
   }
+
+  // Show a resume toast so the user knows the position was restored
+  if (resumeAt > 3) {
+    const mm = Math.floor(resumeAt / 60);
+    const ss = String(Math.floor(resumeAt % 60)).padStart(2, '0');
+    showToast(`▶ Resuming from ${mm}:${ss}`, 'success');
+  }
+
+  // ── Start saving playback position every 5 s ──────────────────────────────
+  clearInterval(saveResumeInterval);
+  saveResumeInterval = setInterval(saveResumeState, 5000);
 
   document.getElementById('videoTitle').textContent = video.title === 'Loading…' ? `Video ${index + 1}` : video.title;
   document.getElementById('videoIndex').textContent = `${index + 1} of ${videos.length}`;
@@ -1126,6 +1165,30 @@ function playVideo(index) {
 function playPrev() { if (currentIndex > 0) playVideo(currentIndex - 1); }
 function playNext() { const v = getVideos(); if (currentIndex < v.length - 1) playVideo(currentIndex + 1); }
 function skipVideo() { playNext(); }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// RESUME HELPERS — save / restore playback position across sessions
+// ══════════════════════════════════════════════════════════════════════════════
+function saveResumeState() {
+  if (currentIndex === -1 || !ytPlayer || !playerReady) return;
+  const video = getVideos()[currentIndex];
+  if (!video) return;
+  try {
+    const pos = ytPlayer.getCurrentTime();
+    if (pos > 3) { // ignore the very beginning — not worth resuming from
+      localStorage.setItem(KEY_RESUME, JSON.stringify({
+        plId: activePLId,
+        videoId: video.id,
+        index: currentIndex,
+        position: Math.floor(pos)
+      }));
+    }
+  } catch {}
+}
+
+function clearResumeState() {
+  try { localStorage.removeItem(KEY_RESUME); } catch {}
+}
 
 // ══════════════════════════════════════════════════════════════════════════════
 // MARK WATCHED
