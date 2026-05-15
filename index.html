@@ -171,13 +171,29 @@
     color: var(--muted); margin-left: 3px; vertical-align: middle;
   }
   .add-trigger {
-    margin-left: auto; align-self: center; width: 24px; height: 24px; border-radius: 5px;
-    background: var(--accent); color: #080809; border: none; font-size: 15px; font-weight: 700;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    line-height: 1; transition: all .14s; flex-shrink: 0;
+    margin-left: auto; align-self: center;
+    display: flex; align-items: center; gap: 5px;
+    padding: 5px 12px 5px 9px; border-radius: 50px;
+    background: var(--accent); color: #080809; border: none;
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700;
+    cursor: pointer; transition: background .14s; flex-shrink: 0; letter-spacing: .03em;
+    line-height: 1;
   }
   .add-trigger:hover { background: var(--accent2); }
-  .add-trigger.open { background: var(--surface2); color: var(--text2); border: 1px solid var(--border2); font-size: 12px; }
+  .add-trigger.open { background: var(--surface2); color: var(--text2); border: 1px solid var(--border2); }
+
+  /* Refresh button in pl-bar */
+  .pl-refresh-btn {
+    flex-shrink: 0; background: none; border: none; cursor: pointer;
+    padding: 5px 6px; border-radius: 5px; color: var(--muted);
+    transition: color .14s; line-height: 0; margin-right: 2px;
+    display: flex; align-items: center;
+  }
+  .pl-refresh-btn:hover { color: var(--accent); }
+  .pl-refresh-btn.spinning .refresh-icon {
+    animation: spin-refresh .7s linear infinite;
+  }
+  @keyframes spin-refresh { to { transform: rotate(360deg); } }
 
   /* ── INLINE ADD ROW ── */
   .add-row-wrap {
@@ -205,19 +221,44 @@
   .panel-view.active { display: flex; }
 
   /* ── QUEUE HEADER ── */
-  .queue-header-bar { padding: 9px 13px 7px; flex-shrink: 0; }
-  .queue-header-top { display: flex; align-items: center; gap: 3px; }
-  .queue-label { font-size: 9px; font-weight: 700; color: var(--muted); flex: 1; letter-spacing: .1em; text-transform: uppercase; font-family: 'DM Mono', monospace; }
-  .queue-count { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
-  .queue-time-left { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+  .queue-header-bar { padding: 9px 12px 7px; flex-shrink: 0; }
+  .queue-header-top { display: flex; align-items: center; justify-content: space-between; }
+  .queue-label { font-size: 9px; font-weight: 700; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; font-family: 'DM Mono', monospace; }
+  .queue-count { display: none; }
+  .queue-time-left { display: none; }
+
+  .queue-actions { display: flex; align-items: center; gap: 2px; }
 
   .icon-btn {
-    background: none; border: none; cursor: pointer; padding: 4px 5px; border-radius: 4px;
-    font-size: 12px; color: var(--muted); transition: color .14s; line-height: 1; flex-shrink: 0;
+    background: none; border: none; cursor: pointer; padding: 6px; border-radius: 5px;
+    color: var(--muted); transition: color .14s; line-height: 0; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
   }
   .icon-btn:hover { color: var(--text2); }
   .icon-btn.active-filter { color: var(--accent); }
-  .clear-btn { font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted); background: none; border: none; cursor: pointer; padding: 3px 5px; border-radius: 4px; transition: color .14s; white-space: nowrap; letter-spacing: .02em; }
+
+  /* Eye SVG strike animation */
+  .eye-strike {
+    stroke-dasharray: 32;
+    stroke-dashoffset: 32;
+    transition: stroke-dashoffset .28s cubic-bezier(.4,0,.2,1);
+    opacity: 0;
+  }
+  .icon-btn.active-filter .eye-strike {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  /* Fade the pupil when filter is on */
+  .icon-btn.active-filter .eye-svg circle {
+    opacity: .3;
+    transition: opacity .2s;
+  }
+
+  .clear-btn {
+    background: none; border: none; cursor: pointer; padding: 6px; border-radius: 5px;
+    color: var(--muted); transition: color .14s; line-height: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
   .clear-btn:hover { color: var(--danger); }
 
   /* SEARCH ROW */
@@ -434,6 +475,13 @@
         <span class="pl-current-name" id="plCurrentName">My Queue</span>
         <span class="pl-arrow" id="plArrow">▼</span>
       </button>
+      <!-- Refresh button — only shown when playlist was imported from YouTube -->
+      <button class="pl-refresh-btn" id="refreshBtn" onclick="refreshPlaylist()" title="Sync new videos from YouTube" style="display:none">
+        <svg class="refresh-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+      </button>
       <button class="pl-new-btn" onclick="openNewPlaylistModal()">+ New</button>
       <div class="pl-dropdown" id="plDropdown"></div>
     </div>
@@ -449,8 +497,11 @@
       <button class="panel-tab" id="tabStats" onclick="switchTab('stats')">
         Stats
       </button>
-      <!-- title hint updated to show / shortcut -->
-      <button class="add-trigger" id="addTrigger" onclick="toggleAddRow()" title="Add video or playlist (/)">+</button>
+      <!-- Add button — prominent pill, always visible -->
+      <button class="add-trigger" id="addTrigger" onclick="toggleAddRow()" title="Add video or playlist (/)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add
+      </button>
     </div>
 
     <!-- ADD ROW -->
@@ -466,15 +517,37 @@
     <!-- ── QUEUE VIEW ── -->
     <div class="panel-view active" id="viewQueue">
       <div class="queue-header-bar">
+        <!-- hidden but kept so JS doesn't crash -->
+        <span id="queueCount" style="display:none"></span>
+        <span id="queueTimeLeft" style="display:none"></span>
         <div class="queue-header-top">
           <span class="queue-label">Up Next</span>
-          <!-- FIX: was missing — caused renderPlaylist() crash -->
-          <span class="queue-count" id="queueCount"></span>
-          <span class="queue-time-left" id="queueTimeLeft"></span>
-          <button class="icon-btn" id="filterBtn" onclick="toggleWatchedFilter()" title="Toggle unwatched only">◎</button>
-          <button class="icon-btn" id="searchBtn" onclick="toggleSearch()" title="Search queue">⌕</button>
-          <!-- FIX: calls confirmClearAll() instead of native confirm() -->
-          <button class="clear-btn" onclick="confirmClearAll()">Clear</button>
+          <div class="queue-actions">
+            <!-- Eye / Eye-off filter button -->
+            <button class="icon-btn" id="filterBtn" onclick="toggleWatchedFilter()" title="Toggle unwatched only">
+              <svg class="eye-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+                <line class="eye-strike" x1="2" y1="2" x2="22" y2="22"/>
+              </svg>
+            </button>
+            <!-- Search button -->
+            <button class="icon-btn" id="searchBtn" onclick="toggleSearch()" title="Search queue">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </button>
+            <!-- Clear button -->
+            <button class="clear-btn" onclick="confirmClearAll()" title="Clear all">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6M14 11v6"/>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+            </button>
+          </div>
         </div>
         <div class="search-row" id="searchRow">
           <input class="search-input" id="searchInput" placeholder="Search queue…" oninput="onSearchInput()">
@@ -765,6 +838,27 @@ function updatePlBar() {
   const pl = getActivePL();
   document.getElementById('plCurrentName').textContent = pl ? pl.name : '—';
   renderPlDropdown();
+  updateRefreshBtn();
+}
+
+function updateRefreshBtn() {
+  const pl = getActivePL();
+  const btn = document.getElementById('refreshBtn');
+  btn.style.display = pl?.sourcePlaylistId ? 'flex' : 'none';
+}
+
+async function refreshPlaylist() {
+  const pl = getActivePL();
+  if (!pl?.sourcePlaylistId) return;
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  btn.disabled = true;
+  const prevCount = pl.videos.length;
+  await importPlaylist(pl.sourcePlaylistId);
+  btn.classList.remove('spinning');
+  btn.disabled = false;
+  const added = pl.videos.length - prevCount;
+  if (added <= 0) showToast('Already up to date', '');
 }
 
 function togglePlDropdown() {
@@ -1020,10 +1114,17 @@ async function importPlaylist(playlistId) {
   }
 
   // Single render after all chunks complete
+  // Save the source so Refresh can re-fetch new videos later
+  const activePL = getActivePL();
+  if (activePL && !activePL.sourcePlaylistId) {
+    activePL.sourcePlaylistId = playlistId;
+    savePersist();
+  }
+  updateRefreshBtn();
   renderPlaylist();
   updateStats();
   hideImportProgress();
-  showToast(`✓ Imported ${added} video${added !== 1 ? 's' : ''}`, 'success');
+  showToast(`Imported ${added} video${added !== 1 ? 's' : ''}`, 'success');
   if (currentIndex === -1 && getVideos().length > 0) playVideo(0);
 }
 
