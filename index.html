@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QUEUE — Your YouTube Playlist</title>
+<title>Study from YT</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -419,7 +419,7 @@
 <body>
 
 <header>
-  <div class="logo">QUE<span>UE</span></div>
+  <div class="logo">Study from <span>YT</span></div>
   <div class="header-center">
     <span><b id="watchTimer">00:00</b> watched</span>
     <span id="goalStatus" style="display:none"><b id="goalProgress">0/0</b> goal</span>
@@ -827,8 +827,9 @@ function closeConfirmModal() {
   confirmCallback = null;
 }
 function executeConfirm() {
+  const cb = confirmCallback;
   closeConfirmModal();
-  if (typeof confirmCallback === 'function') confirmCallback();
+  if (typeof cb === 'function') cb();
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1179,7 +1180,9 @@ function toggleAddRow(forceState) {
   addRowOpen = forceState !== undefined ? forceState : !addRowOpen;
   document.getElementById('addRowWrap').classList.toggle('open', addRowOpen);
   document.getElementById('addTrigger').classList.toggle('open', addRowOpen);
-  document.getElementById('addTrigger').textContent = addRowOpen ? '✕' : '+';
+  document.getElementById('addTrigger').innerHTML = addRowOpen
+    ? '✕'
+    : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add`;
   if (addRowOpen) {
     setTimeout(() => document.getElementById('urlInput').focus(), 200);
     if (activeTab !== 'queue') switchTab('queue');
