@@ -35,7 +35,7 @@
     background: var(--bg); position: sticky; top: 0; z-index: 100; height: 50px;
   }
   .logo { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--text2); }
-  .logo span { color: var(--text); }
+  .logo span { color: #FF0000; }
   .header-center { display: flex; align-items: center; gap: 18px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
   .header-center b { color: var(--text2); font-weight: 400; }
   .goal-badge {
@@ -304,6 +304,18 @@
   .queue-item:hover .item-del { color: var(--muted); }
   .item-del:hover { color: var(--danger) !important; }
   .item-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+
+  /* ── DRAG & DROP ── */
+  .item-drag {
+    display: flex; align-items: center; justify-content: center;
+    width: 14px; flex-shrink: 0; cursor: grab; color: transparent;
+    transition: color .14s; padding: 2px 0; touch-action: none;
+  }
+  .queue-item:hover .item-drag { color: var(--muted); }
+  .item-drag:active { cursor: grabbing; }
+  .queue-item.dragging { opacity: .25; border-color: transparent !important; background: transparent !important; }
+  .queue-item.drag-over { border-color: var(--accent) !important; background: var(--accent-dim) !important; transform: scale(1.01); }
+  .queue-item[draggable="true"] { user-select: none; }
 
   /* ── STATS BAR ── */
   .stats-bar { padding: 8px 14px; border-top: 1px solid var(--border); background: var(--bg); flex-shrink: 0; }
@@ -719,6 +731,7 @@ let chapters = [], chapterTrackInterval = null;
 let timerInterval = null;      // FIX: store interval so it can be cleared
 let confirmCallback = null;    // FIX: for custom confirm modal
 let saveResumeInterval = null; // interval that periodically saves playback position
+let dragSrcOrigIndex = -1;     // drag-and-drop source index
 
 const KEY_PLAYLISTS     = 'queue_playlists_v2';
 const KEY_ACTIVE_PL     = 'queue_active_pl';
@@ -1359,7 +1372,15 @@ function renderPlaylist() {
   }
 
   el.innerHTML = displayed.map(v => `
-    <div class="queue-item ${v.origIndex === currentIndex ? 'active' : ''} ${v.watched ? 'watched' : ''}" onclick="playVideo(${v.origIndex})">
+    <div class="queue-item ${v.origIndex === currentIndex ? 'active' : ''} ${v.watched ? 'watched' : ''}"
+         draggable="true" data-orig-index="${v.origIndex}" onclick="playVideo(${v.origIndex})">
+      <div class="item-drag" onclick="event.stopPropagation()" title="Drag to reorder">
+        <svg width="10" height="14" viewBox="0 0 10 14" fill="currentColor">
+          <circle cx="3" cy="2.5" r="1.2"/><circle cx="7" cy="2.5" r="1.2"/>
+          <circle cx="3" cy="7" r="1.2"/><circle cx="7" cy="7" r="1.2"/>
+          <circle cx="3" cy="11.5" r="1.2"/><circle cx="7" cy="11.5" r="1.2"/>
+        </svg>
+      </div>
       <img class="item-thumb" src="${v.thumb}" alt="" onerror="this.style.background='#2a2a2e'">
       <div class="item-body">
         <div class="item-title">${escHtml(v.title)}</div>
@@ -1625,6 +1646,74 @@ function highlightCurrentChapter() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// DRAG & DROP — reorder videos in the playlist
+// Uses event delegation on #playlist so it survives renderPlaylist() re-renders
+// ══════════════════════════════════════════════════════════════════════════════
+function initDragDrop() {
+  const container = document.getElementById('playlist');
+
+  container.addEventListener('dragstart', e => {
+    const item = e.target.closest('.queue-item[draggable]');
+    if (!item) return;
+    dragSrcOrigIndex = parseInt(item.dataset.origIndex);
+    item.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', String(dragSrcOrigIndex));
+  });
+
+  container.addEventListener('dragover', e => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const item = e.target.closest('.queue-item[draggable]');
+    if (!item) return;
+    const destIdx = parseInt(item.dataset.origIndex);
+    if (destIdx === dragSrcOrigIndex) return;
+    container.querySelectorAll('.queue-item.drag-over').forEach(el => el.classList.remove('drag-over'));
+    item.classList.add('drag-over');
+  });
+
+  container.addEventListener('dragleave', e => {
+    const item = e.target.closest('.queue-item[draggable]');
+    // only remove if we're leaving the item entirely (not just a child)
+    if (item && !item.contains(e.relatedTarget)) item.classList.remove('drag-over');
+  });
+
+  container.addEventListener('drop', e => {
+    e.preventDefault();
+    const item = e.target.closest('.queue-item[draggable]');
+    if (!item) return;
+    const destOrigIndex = parseInt(item.dataset.origIndex);
+    if (isNaN(destOrigIndex) || destOrigIndex === dragSrcOrigIndex || dragSrcOrigIndex === -1) return;
+
+    const videos = getVideos();
+    // splice out the dragged video and re-insert at destination
+    const [moved] = videos.splice(dragSrcOrigIndex, 1);
+    videos.splice(destOrigIndex, 0, moved);
+
+    // keep currentIndex pointing at the same video after reorder
+    if (currentIndex === dragSrcOrigIndex) {
+      currentIndex = destOrigIndex;
+    } else if (dragSrcOrigIndex < currentIndex && destOrigIndex >= currentIndex) {
+      currentIndex--;
+    } else if (dragSrcOrigIndex > currentIndex && destOrigIndex <= currentIndex) {
+      currentIndex++;
+    }
+
+    savePersist();
+    renderPlaylist();
+    updateProgress();
+    showToast('↕ Reordered', '');
+  });
+
+  container.addEventListener('dragend', () => {
+    container.querySelectorAll('.queue-item.dragging, .queue-item.drag-over').forEach(el => {
+      el.classList.remove('dragging', 'drag-over');
+    });
+    dragSrcOrigIndex = -1;
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // UTILS
 // ══════════════════════════════════════════════════════════════════════════════
 function escHtml(str) {
@@ -1659,6 +1748,7 @@ document.getElementById('confirmOkBtn').addEventListener('click', executeConfirm
 // ── START ─────────────────────────────────────────────────────────────────────
 loadYTAPI();
 init();
+initDragDrop();
 </script>
 </body>
 </html>
