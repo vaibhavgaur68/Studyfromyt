@@ -182,6 +182,150 @@
   .add-trigger:hover { background: var(--accent2); }
   .add-trigger.open { background: var(--surface2); color: var(--text2); border: 1px solid var(--border2); }
 
+  /* ── AI FIND BUTTON ── */
+  .ai-find-btn {
+    align-self: center; display: flex; align-items: center; gap: 5px;
+    padding: 5px 11px 5px 8px; border-radius: 50px;
+    background: transparent; color: var(--text2);
+    border: 1px solid var(--border2);
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700;
+    cursor: pointer; transition: all .16s; flex-shrink: 0; letter-spacing: .03em;
+    line-height: 1; margin-left: 6px;
+  }
+  .ai-find-btn:hover { border-color: #a78bfa; color: #a78bfa; background: rgba(167,139,250,.07); }
+  .ai-find-btn.open { border-color: #a78bfa; color: #a78bfa; background: rgba(167,139,250,.1); }
+  .ai-find-btn .ai-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #a78bfa; flex-shrink: 0;
+    box-shadow: 0 0 6px #a78bfa;
+    animation: ai-pulse 2s ease-in-out infinite;
+  }
+  @keyframes ai-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.85)} }
+
+  /* ── AI FIND PANEL ── */
+  .ai-panel-wrap {
+    max-height: 0; overflow: hidden; flex-shrink: 0;
+    transition: max-height .24s cubic-bezier(.4,0,.2,1);
+    border-bottom: 1px solid transparent;
+  }
+  .ai-panel-wrap.open {
+    max-height: 600px;
+    border-bottom-color: var(--border);
+  }
+  .ai-panel {
+    background: var(--bg);
+    padding: 10px 12px 12px;
+  }
+
+  /* Search row */
+  .ai-search-row { display: flex; gap: 7px; align-items: center; margin-bottom: 10px; }
+  .ai-input {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 8px 11px;
+    font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text);
+    outline: none; transition: border-color .18s; min-width: 0;
+  }
+  .ai-input:focus { border-color: #a78bfa; }
+  .ai-input::placeholder { color: var(--muted); }
+  .ai-go-btn {
+    flex-shrink: 0; padding: 8px 14px; border-radius: var(--radius);
+    background: #a78bfa; color: #080809; border: none;
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700;
+    cursor: pointer; transition: background .14s; letter-spacing: .03em;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .ai-go-btn:hover { background: #8b6ef0; }
+  .ai-go-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+  /* Groq key row */
+  .ai-key-row {
+    display: flex; gap: 6px; align-items: center;
+    margin-bottom: 10px;
+  }
+  .ai-key-input {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 6px 10px;
+    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text);
+    outline: none; transition: border-color .18s; min-width: 0;
+  }
+  .ai-key-input:focus { border-color: #a78bfa; }
+  .ai-key-input::placeholder { color: var(--muted); }
+  .ai-key-save-btn {
+    flex-shrink: 0; padding: 5px 10px; border-radius: var(--radius);
+    background: none; border: 1px solid var(--border2);
+    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted);
+    cursor: pointer; transition: all .14s;
+  }
+  .ai-key-save-btn:hover { border-color: #a78bfa; color: #a78bfa; }
+  .ai-key-label {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    color: var(--muted); letter-spacing: .06em; text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  /* Status / thinking */
+  .ai-status {
+    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted);
+    padding: 4px 0 8px; display: none; align-items: center; gap: 8px;
+  }
+  .ai-status.show { display: flex; }
+  .ai-spinner {
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 1.5px solid #a78bfa; border-top-color: transparent;
+    animation: spin .7s linear infinite; flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Results */
+  .ai-results { display: flex; flex-direction: column; gap: 8px; max-height: 340px; overflow-y: auto; padding-right: 2px; }
+  .ai-results::-webkit-scrollbar { width: 3px; }
+  .ai-results::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  .ai-result-card {
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 9px 10px;
+    display: flex; gap: 9px; align-items: flex-start;
+    transition: border-color .16s;
+  }
+  .ai-result-card:hover { border-color: #a78bfa44; }
+  .ai-result-card.added { border-color: #4a7a4a88; }
+
+  .ai-result-thumb {
+    width: 72px; height: 40px; border-radius: 4px;
+    object-fit: cover; flex-shrink: 0; background: var(--surface);
+  }
+  .ai-result-body { flex: 1; min-width: 0; }
+  .ai-result-title {
+    font-size: 11px; font-weight: 600; line-height: 1.4; color: var(--text);
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    margin-bottom: 4px;
+  }
+  .ai-result-meta {
+    display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin-bottom: 4px;
+  }
+  .ai-result-badge {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    color: var(--muted); background: var(--surface);
+    border: 1px solid var(--border); border-radius: 3px; padding: 1px 5px;
+    white-space: nowrap;
+  }
+  .ai-result-badge.rank-1 { border-color: #a78bfa55; color: #a78bfa; }
+  .ai-result-reason {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    color: #7a7a9a; line-height: 1.55; font-style: italic;
+  }
+  .ai-result-add {
+    flex-shrink: 0; padding: 5px 9px; border-radius: 5px;
+    background: none; border: 1px solid var(--border2);
+    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 700;
+    color: var(--muted); cursor: pointer; transition: all .14s;
+    align-self: center; white-space: nowrap;
+  }
+  .ai-result-add:hover { border-color: #a78bfa; color: #a78bfa; background: rgba(167,139,250,.08); }
+  .ai-result-add.done { border-color: #4a7a4a; color: #5faa5f; background: rgba(74,122,74,.08); pointer-events: none; }
+
+  .ai-empty { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); text-align: center; padding: 20px 0; }
+
   /* Refresh button in pl-bar */
   .pl-refresh-btn {
     flex-shrink: 0; background: none; border: none; cursor: pointer;
@@ -420,6 +564,101 @@
   .toast.success { border-color: #1e3e1e; color: #4a9a4a; }
   .toast.error { border-color: rgba(184,48,48,.4); color: #d05050; }
 
+  /* ── NOTES PANEL ── */
+  .notes-toggle-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: none; border: 1px solid var(--border2);
+    border-radius: 50px; padding: 3px 10px 3px 7px;
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--muted); cursor: pointer; transition: all .16s;
+    letter-spacing: .03em; white-space: nowrap;
+  }
+  .notes-toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .notes-toggle-btn.has-notes { border-color: #4a7a4a; color: #5faa5f; background: rgba(74,122,74,.08); }
+  .notes-toggle-btn.panel-open { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+  .notes-toggle-btn svg { flex-shrink: 0; }
+
+  .notes-panel {
+    flex-shrink: 0; border-top: 1px solid var(--border);
+    background: var(--surface); display: flex; flex-direction: column;
+    max-height: 0; overflow: hidden;
+    transition: max-height .28s cubic-bezier(.4,0,.2,1);
+  }
+  .notes-panel.open { max-height: 420px; }
+
+  .notes-panel-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px 8px; flex-shrink: 0; border-bottom: 1px solid var(--border);
+  }
+  .notes-panel-title {
+    font-size: 10px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--text2); font-family: 'DM Mono', monospace;
+  }
+  .notes-panel-title span {
+    font-weight: 400; color: var(--muted); margin-left: 6px;
+    text-transform: none; letter-spacing: 0; font-size: 10px;
+    max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    display: inline-block; vertical-align: middle;
+  }
+  .notes-close-btn {
+    background: none; border: none; cursor: pointer; color: var(--muted);
+    font-size: 16px; line-height: 1; padding: 0 2px; transition: color .14s;
+  }
+  .notes-close-btn:hover { color: var(--text); }
+
+  .notes-link-row {
+    display: flex; align-items: center; gap: 7px;
+    padding: 9px 14px; flex-shrink: 0; border-bottom: 1px solid var(--border);
+  }
+  .notes-input {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 6px 10px;
+    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text);
+    outline: none; transition: border-color .18s; min-width: 0;
+  }
+  .notes-input:focus { border-color: var(--accent); }
+  .notes-input::placeholder { color: var(--muted); }
+  .notes-save-btn {
+    flex-shrink: 0; background: var(--accent); color: #080809;
+    border: none; border-radius: var(--radius); padding: 6px 12px;
+    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 700;
+    cursor: pointer; transition: background .14s; letter-spacing: .04em;
+  }
+  .notes-save-btn:hover { background: var(--accent2); }
+  .notes-clear-btn {
+    flex-shrink: 0; background: none; border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 5px 9px;
+    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted);
+    cursor: pointer; transition: all .14s;
+  }
+  .notes-clear-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+  .notes-iframe-wrap {
+    flex: 1; position: relative; overflow: hidden; min-height: 0;
+  }
+  .notes-iframe-wrap iframe {
+    width: 100%; height: 100%; border: none; display: block;
+    background: var(--surface2);
+  }
+  .notes-empty-state {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 8px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--muted); text-align: center; padding: 20px;
+  }
+  .notes-empty-state .ne-icon { font-size: 22px; opacity: .2; margin-bottom: 2px; }
+  .notes-empty-state p { line-height: 1.7; }
+  .notes-empty-state code {
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 4px; padding: 1px 6px; font-size: 10px; color: var(--text2);
+  }
+
+  /* queue-item notes indicator dot */
+  .item-note-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: #5faa5f; flex-shrink: 0; margin-left: 1px;
+  }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 860px) {
     .app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: auto; }
@@ -453,10 +692,20 @@
 
     <div class="video-info" id="videoInfo" style="display:none;">
       <div class="video-title" id="videoTitle">—</div>
-      <div class="video-meta">
+      <div class="video-meta" style="flex-wrap:wrap; gap:8px;">
         <span id="videoIndex">—</span>
         <span id="videoDurationMeta"></span>
         <span id="watchedStatus"></span>
+        <button class="notes-toggle-btn" id="notesToggleBtn" onclick="toggleNotesPanel()" title="View / attach notes for this video">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          Notes
+        </button>
       </div>
     </div>
 
@@ -476,6 +725,33 @@
       <button class="btn btn-ghost btn-skip" id="skipBtn" onclick="skipVideo()" disabled>Skip</button>
       <button class="btn btn-ghost btn-auto on" id="autoBtn" onclick="toggleAutoAdvance()" title="Toggle auto-advance">Auto</button>
     </div>
+
+    <!-- ── NOTES PANEL ── -->
+    <div class="notes-panel" id="notesPanel">
+      <div class="notes-panel-head">
+        <div class="notes-panel-title">
+          Notes
+          <span id="notesPanelVideoName">—</span>
+        </div>
+        <button class="notes-close-btn" onclick="toggleNotesPanel(false)" title="Close notes">✕</button>
+      </div>
+      <div class="notes-link-row">
+        <input class="notes-input" id="notesInput" type="text"
+          placeholder="Paste Google Drive / Docs link…"
+          onkeydown="if(event.key==='Enter') saveNotesLink()">
+        <button class="notes-save-btn" onclick="saveNotesLink()">Save</button>
+        <button class="notes-clear-btn" id="notesClearBtn" onclick="clearNotesLink()" style="display:none" title="Remove notes link">✕</button>
+      </div>
+      <div class="notes-iframe-wrap" id="notesIframeWrap">
+        <div class="notes-empty-state" id="notesEmptyState">
+          <div class="ne-icon">📄</div>
+          <p>Paste a Google Drive or Google Docs link above<br>and click <strong>Save</strong> to view your notes here.</p>
+          <p style="margin-top:6px;font-size:10px;">Make sure the file is set to<br><code>Anyone with the link can view</code></p>
+        </div>
+        <iframe id="notesIframe" src="" style="display:none;" allow="autoplay" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>
+      </div>
+    </div>
+
   </div>
 
   <!-- ── RIGHT: QUEUE PANEL ── -->
@@ -514,6 +790,11 @@
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Add
       </button>
+      <!-- AI Find button -->
+      <button class="ai-find-btn" id="aiFindBtn" onclick="toggleAiPanel()" title="Ask AI to find lectures for you">
+        <div class="ai-dot"></div>
+        AI Find
+      </button>
     </div>
 
     <!-- ADD ROW -->
@@ -523,6 +804,37 @@
           placeholder="Video URL, ID, or playlist URL…"
           onkeydown="if(event.key==='Enter')handleAdd(); if(event.key==='Escape')toggleAddRow(false)">
         <button class="add-confirm" onclick="handleAdd()">Add</button>
+      </div>
+    </div>
+
+    <!-- ── AI FIND PANEL ── -->
+    <div class="ai-panel-wrap" id="aiPanelWrap">
+      <div class="ai-panel">
+        <!-- Groq API key -->
+        <div class="ai-key-label">Groq API Key</div>
+        <div class="ai-key-row">
+          <input class="ai-key-input" id="groqKeyInput" type="password"
+            placeholder="gsk_…  (saved locally, never sent anywhere else)"
+            onkeydown="if(event.key==='Enter') saveGroqKey()">
+          <button class="ai-key-save-btn" onclick="saveGroqKey()">Save</button>
+        </div>
+        <!-- Natural language query -->
+        <div class="ai-search-row">
+          <input class="ai-input" id="aiQueryInput" type="text"
+            placeholder="e.g. 30 min lecture on neural networks from this year…"
+            onkeydown="if(event.key==='Enter') runAiFind(); if(event.key==='Escape') toggleAiPanel(false)">
+          <button class="ai-go-btn" id="aiGoBtn" onclick="runAiFind()">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Find
+          </button>
+        </div>
+        <!-- Thinking status -->
+        <div class="ai-status" id="aiStatus">
+          <div class="ai-spinner"></div>
+          <span id="aiStatusText">Thinking…</span>
+        </div>
+        <!-- Results list -->
+        <div class="ai-results" id="aiResults"></div>
       </div>
     </div>
 
@@ -732,6 +1044,9 @@ let timerInterval = null;      // FIX: store interval so it can be cleared
 let confirmCallback = null;    // FIX: for custom confirm modal
 let saveResumeInterval = null; // interval that periodically saves playback position
 let dragSrcOrigIndex = -1;     // drag-and-drop source index
+let aiPanelOpen = false;       // AI Find panel open state
+
+const KEY_GROQ_KEY = 'sfyt_groq_key';
 
 const KEY_PLAYLISTS     = 'queue_playlists_v2';
 const KEY_ACTIVE_PL     = 'queue_active_pl';
@@ -774,6 +1089,9 @@ function init() {
   updateGoalUI();
   updateTimer();
   startTimerInterval();
+  // Pre-fill Groq key if saved
+  const savedGroqKey = localStorage.getItem(KEY_GROQ_KEY);
+  if (savedGroqKey) document.getElementById('groqKeyInput').value = savedGroqKey;
 
   // Resume last video position after a short delay (player needs to initialise)
   try {
@@ -1200,6 +1518,7 @@ function toggleAddRow(forceState) {
     setTimeout(() => document.getElementById('urlInput').focus(), 200);
     if (activeTab !== 'queue') switchTab('queue');
     closePlDropdown();
+    if (aiPanelOpen) toggleAiPanel(false);
   }
 }
 
@@ -1289,6 +1608,7 @@ function playVideo(index) {
   fetchTimestamps(video.id, video.title !== 'Loading…' ? video.title : null);
   renderPlaylist();
   updateProgress();
+  refreshNotesPanel();
 }
 
 function playPrev() { if (currentIndex > 0) playVideo(currentIndex - 1); }
@@ -1387,6 +1707,7 @@ function renderPlaylist() {
         <div class="item-meta">
           <span class="item-badge ${v.watched ? 'done-badge' : ''}">${v.watched ? '✓ Watched' : `#${v.origIndex + 1}`}</span>
           ${v.duration ? `<span class="item-duration">${v.duration}</span>` : ''}
+          ${v.notesUrl ? `<div class="item-note-dot" title="Has notes attached"></div>` : ''}
         </div>
       </div>
       <div class="item-actions">
@@ -1643,6 +1964,372 @@ function highlightCurrentChapter() {
   let activeIdx = -1;
   for (let i = chapters.length - 1; i >= 0; i--) { if (cur >= chapters[i].time) { activeIdx = i; break; } }
   document.querySelectorAll('.chapter-btn').forEach((btn, i) => btn.classList.toggle('active', i === activeIdx));
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// NOTES PANEL — per-video Google Drive notes
+// ══════════════════════════════════════════════════════════════════════════════
+let notesPanelOpen = false;
+
+function drivePreviewUrl(raw) {
+  if (!raw) return '';
+  raw = raw.trim();
+  // Already a preview URL — use as-is
+  if (raw.includes('/preview') || raw.includes('pub?embedded=true')) return raw;
+  // Google Docs /edit or /view → pub embed (cleanest for docs)
+  const docMatch = raw.match(/docs\.google\.com\/document\/d\/([^/]+)/);
+  if (docMatch) return `https://docs.google.com/document/d/${docMatch[1]}/pub?embedded=true`;
+  // Google Slides
+  const slidesMatch = raw.match(/docs\.google\.com\/presentation\/d\/([^/]+)/);
+  if (slidesMatch) return `https://docs.google.com/presentation/d/${slidesMatch[1]}/embed`;
+  // Google Sheets
+  const sheetsMatch = raw.match(/docs\.google\.com\/spreadsheets\/d\/([^/]+)/);
+  if (sheetsMatch) return `https://docs.google.com/spreadsheets/d/${sheetsMatch[1]}/htmlview`;
+  // Generic Drive file — use /preview
+  const driveMatch = raw.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+  if (driveMatch) return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+  // Fallback: treat whole URL as embed src
+  return raw;
+}
+
+function refreshNotesPanel() {
+  if (currentIndex === -1) return;
+  const video = getVideos()[currentIndex];
+  if (!video) return;
+
+  const notesUrl = video.notesUrl || '';
+  const shortTitle = video.title.length > 28 ? video.title.slice(0, 26) + '…' : video.title;
+
+  document.getElementById('notesPanelVideoName').textContent = shortTitle;
+  document.getElementById('notesInput').value = notesUrl;
+
+  const clearBtn = document.getElementById('notesClearBtn');
+  const iframe = document.getElementById('notesIframe');
+  const empty  = document.getElementById('notesEmptyState');
+  const btn    = document.getElementById('notesToggleBtn');
+
+  if (notesUrl) {
+    clearBtn.style.display = 'inline-block';
+    iframe.src = drivePreviewUrl(notesUrl);
+    iframe.style.display = 'block';
+    empty.style.display = 'none';
+    btn.classList.add('has-notes');
+    btn.title = 'Notes attached — click to view';
+  } else {
+    clearBtn.style.display = 'none';
+    iframe.src = '';
+    iframe.style.display = 'none';
+    empty.style.display = 'flex';
+    btn.classList.remove('has-notes');
+    btn.title = 'Attach notes for this video';
+  }
+
+  // Keep open/closed state in sync on video switch
+  document.getElementById('notesPanel').classList.toggle('open', notesPanelOpen);
+  btn.classList.toggle('panel-open', notesPanelOpen);
+}
+
+function toggleNotesPanel(forceState) {
+  if (currentIndex === -1) { showToast('Play a video first', 'error'); return; }
+  notesPanelOpen = forceState !== undefined ? forceState : !notesPanelOpen;
+  document.getElementById('notesPanel').classList.toggle('open', notesPanelOpen);
+  document.getElementById('notesToggleBtn').classList.toggle('panel-open', notesPanelOpen);
+  if (notesPanelOpen) setTimeout(() => document.getElementById('notesInput').focus(), 260);
+}
+
+function saveNotesLink() {
+  if (currentIndex === -1) return;
+  const raw = document.getElementById('notesInput').value.trim();
+  const video = getVideos()[currentIndex];
+  if (!video) return;
+
+  if (raw && !raw.startsWith('http')) {
+    showToast('Please paste a full https:// link', 'error');
+    return;
+  }
+
+  video.notesUrl = raw || '';
+  savePersist();
+  refreshNotesPanel();
+  renderPlaylist(); // refresh dot indicator
+  showToast(raw ? '📄 Notes linked!' : 'Notes removed', raw ? 'success' : '');
+}
+
+function clearNotesLink() {
+  if (currentIndex === -1) return;
+  const video = getVideos()[currentIndex];
+  if (!video) return;
+  video.notesUrl = '';
+  document.getElementById('notesInput').value = '';
+  savePersist();
+  refreshNotesPanel();
+  renderPlaylist();
+  showToast('Notes removed', '');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// AI FIND — Groq parses query → YouTube Search → Groq re-ranks
+// ══════════════════════════════════════════════════════════════════════════════
+
+function toggleAiPanel(forceState) {
+  aiPanelOpen = forceState !== undefined ? forceState : !aiPanelOpen;
+  document.getElementById('aiPanelWrap').classList.toggle('open', aiPanelOpen);
+  document.getElementById('aiFindBtn').classList.toggle('open', aiPanelOpen);
+  if (aiPanelOpen) {
+    // pre-fill saved key display
+    const saved = localStorage.getItem(KEY_GROQ_KEY) || '';
+    document.getElementById('groqKeyInput').value = saved;
+    // close add row if open
+    if (addRowOpen) toggleAddRow(false);
+    setTimeout(() => document.getElementById('aiQueryInput').focus(), 240);
+  }
+}
+
+function saveGroqKey() {
+  const key = document.getElementById('groqKeyInput').value.trim();
+  if (!key) return;
+  localStorage.setItem(KEY_GROQ_KEY, key);
+  showToast('Groq key saved', 'success');
+}
+
+function getGroqKey() {
+  return (document.getElementById('groqKeyInput').value.trim()) ||
+         (localStorage.getItem(KEY_GROQ_KEY) || '');
+}
+
+function setAiStatus(msg, show = true) {
+  document.getElementById('aiStatusText').textContent = msg;
+  document.getElementById('aiStatus').classList.toggle('show', show);
+}
+
+async function callGroq(key, messages, temperature = 0.3) {
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      temperature,
+      max_tokens: 600,
+      messages
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `Groq error ${res.status}`);
+  }
+  const data = await res.json();
+  return data.choices[0].message.content.trim();
+}
+
+async function runAiFind() {
+  const key = getGroqKey();
+  if (!key) { showToast('Add your Groq API key first', 'error'); document.getElementById('groqKeyInput').focus(); return; }
+
+  const query = document.getElementById('aiQueryInput').value.trim();
+  if (!query) { showToast('Type what you want to find', 'error'); return; }
+
+  const btn = document.getElementById('aiGoBtn');
+  btn.disabled = true;
+  document.getElementById('aiResults').innerHTML = '';
+  setAiStatus('Parsing your request…');
+
+  try {
+    // ── STEP 1: Groq parses natural language into YouTube search params ──────
+    const today = new Date().toISOString().split('T')[0];
+    const parsePrompt = `You are a YouTube search parameter extractor.
+Today's date: ${today}
+
+User request: "${query}"
+
+Extract search parameters and return ONLY valid JSON (no markdown, no explanation):
+{
+  "searchQuery": "optimized YouTube search string (topic + educational keywords)",
+  "videoDuration": "any|short|medium|long",
+  "publishedAfter": "YYYY-MM-DDT00:00:00Z or empty string",
+  "publishedBefore": "YYYY-MM-DDT00:00:00Z or empty string",
+  "order": "relevance|viewCount|rating",
+  "minMinutes": 0,
+  "maxMinutes": 0,
+  "count": 8
+}
+
+Duration rules:
+- short = under 4 min → "short"
+- medium = 4–20 min → "medium"  
+- long = over 20 min → "long"
+- If user specifies exact minutes, pick closest bracket AND set minMinutes/maxMinutes.
+- If no duration mentioned → "any", minMinutes=0, maxMinutes=0
+
+Recency rules:
+- "this year" / "2025" → publishedAfter = start of this year
+- "last 2 years" → publishedAfter = 2 years ago
+- "recent" / "new" → publishedAfter = 1 year ago
+- "old" / "classic" → publishedBefore = 5 years ago
+- No time → empty strings
+
+Always append "lecture" or "tutorial" or "explained" to searchQuery unless user specified a style.
+count must be 8.`;
+
+    const rawParams = await callGroq(key, [{ role: 'user', content: parsePrompt }]);
+    let params;
+    try {
+      params = JSON.parse(rawParams.replace(/```json|```/g, '').trim());
+    } catch {
+      throw new Error('Could not parse AI response. Try again.');
+    }
+
+    // ── STEP 2: YouTube search with extracted params ──────────────────────────
+    setAiStatus('Searching YouTube…');
+    let ytUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=${params.count || 8}&key=${YT_API_KEY}&q=${encodeURIComponent(params.searchQuery)}`;
+    if (params.videoDuration && params.videoDuration !== 'any') ytUrl += `&videoDuration=${params.videoDuration}`;
+    if (params.publishedAfter)  ytUrl += `&publishedAfter=${params.publishedAfter}`;
+    if (params.publishedBefore) ytUrl += `&publishedBefore=${params.publishedBefore}`;
+    if (params.order)           ytUrl += `&order=${params.order}`;
+
+    const ytRes = await fetch(ytUrl);
+    if (!ytRes.ok) throw new Error('YouTube search failed');
+    const ytData = await ytRes.json();
+
+    if (!ytData.items?.length) {
+      setAiStatus('', false);
+      document.getElementById('aiResults').innerHTML = `<div class="ai-empty">No videos found. Try rephrasing.</div>`;
+      btn.disabled = false;
+      return;
+    }
+
+    // ── STEP 3: Fetch full details (duration, view count) ────────────────────
+    setAiStatus('Fetching video details…');
+    const videoIds = ytData.items.map(i => i.id.videoId).filter(Boolean);
+    const detailRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id=${videoIds.join(',')}&key=${YT_API_KEY}`);
+    if (!detailRes.ok) throw new Error('Could not fetch video details');
+    const detailData = await detailRes.json();
+
+    // Build enriched candidate list
+    let candidates = (detailData.items || []).map(item => {
+      const dur = parseDuration(item.contentDetails?.duration || '');
+      const views = parseInt(item.statistics?.viewCount || '0');
+      return {
+        id: item.id,
+        title: item.snippet.title,
+        channel: item.snippet.channelTitle,
+        thumb: `https://img.youtube.com/vi/${item.id}/mqdefault.jpg`,
+        duration: dur.formatted,
+        durationSec: dur.seconds,
+        durationMin: Math.round(dur.seconds / 60),
+        views,
+        publishedAt: item.snippet.publishedAt?.slice(0, 10) || ''
+      };
+    });
+
+    // Client-side duration filter if exact minutes were specified
+    if (params.minMinutes > 0 || params.maxMinutes > 0) {
+      candidates = candidates.filter(v => {
+        const ok_min = params.minMinutes > 0 ? v.durationMin >= params.minMinutes - 3 : true;
+        const ok_max = params.maxMinutes > 0 ? v.durationMin <= params.maxMinutes + 3 : true;
+        return ok_min && ok_max;
+      });
+      if (!candidates.length) {
+        // relax filter slightly if nothing matches
+        candidates = (detailData.items || []).map(item => {
+          const dur = parseDuration(item.contentDetails?.duration || '');
+          return { id: item.id, title: item.snippet.title, channel: item.snippet.channelTitle, thumb: `https://img.youtube.com/vi/${item.id}/mqdefault.jpg`, duration: dur.formatted, durationSec: dur.seconds, durationMin: Math.round(dur.seconds / 60), views: parseInt(item.statistics?.viewCount || '0'), publishedAt: item.snippet.publishedAt?.slice(0, 10) || '' };
+        });
+      }
+    }
+
+    // ── STEP 4: Groq re-ranks and picks best 5 ───────────────────────────────
+    setAiStatus('AI is picking the best matches…');
+    const candidateSummary = candidates.map((v, i) =>
+      `${i+1}. "${v.title}" by ${v.channel} | ${v.durationMin}min | ${(v.views/1000).toFixed(0)}K views | ${v.publishedAt}`
+    ).join('\n');
+
+    const rankPrompt = `You are an expert educational content curator.
+
+Original user request: "${query}"
+
+YouTube search results:
+${candidateSummary}
+
+Pick the best 5 videos that truly match the user's request. Prefer:
+- Educational quality over clickbait
+- Reputable channels (universities, known educators, official courses)
+- Accurate duration match if user specified time
+- Genuine educational depth
+
+Return ONLY valid JSON array (no markdown):
+[
+  { "index": 1, "reason": "one short sentence why this is ideal" },
+  ...
+]
+
+index refers to the number in the list above. Return exactly 5 items ordered best-first.`;
+
+    const rankRaw = await callGroq(key, [{ role: 'user', content: rankPrompt }], 0.2);
+    let ranked;
+    try {
+      ranked = JSON.parse(rankRaw.replace(/```json|```/g, '').trim());
+    } catch {
+      // fallback: show all candidates unranked
+      ranked = candidates.slice(0, 5).map((_, i) => ({ index: i + 1, reason: 'Matches your search criteria.' }));
+    }
+
+    // ── STEP 5: Render result cards ──────────────────────────────────────────
+    setAiStatus('', false);
+    const resultsEl = document.getElementById('aiResults');
+
+    if (!ranked.length) {
+      resultsEl.innerHTML = `<div class="ai-empty">AI couldn't rank results. Try a different query.</div>`;
+      btn.disabled = false;
+      return;
+    }
+
+    resultsEl.innerHTML = ranked.map((r, pos) => {
+      const v = candidates[r.index - 1];
+      if (!v) return '';
+      const alreadyInQueue = getVideos().some(q => q.id === v.id);
+      return `<div class="ai-result-card ${alreadyInQueue ? 'added' : ''}" id="aicard-${v.id}">
+        <img class="ai-result-thumb" src="${v.thumb}" alt="" onerror="this.style.background='#2a2a2e'">
+        <div class="ai-result-body">
+          <div class="ai-result-title">${escHtml(v.title)}</div>
+          <div class="ai-result-meta">
+            ${pos === 0 ? `<span class="ai-result-badge rank-1">★ Best match</span>` : ''}
+            <span class="ai-result-badge">${v.durationMin}m</span>
+            <span class="ai-result-badge">${escHtml(v.channel)}</span>
+            <span class="ai-result-badge">${(v.views/1000).toFixed(0)}K views</span>
+            <span class="ai-result-badge">${v.publishedAt}</span>
+          </div>
+          <div class="ai-result-reason">"${escHtml(r.reason)}"</div>
+        </div>
+        <button class="ai-result-add ${alreadyInQueue ? 'done' : ''}" id="aiAdd-${v.id}"
+          onclick="addAiVideo('${v.id}','${escHtml(v.title).replace(/'/g,"\\'")}','${v.thumb}','${v.duration}',${v.durationSec})">
+          ${alreadyInQueue ? '✓' : '+ Add'}
+        </button>
+      </div>`;
+    }).join('');
+
+  } catch (err) {
+    setAiStatus('', false);
+    document.getElementById('aiResults').innerHTML = `<div class="ai-empty">⚠ ${escHtml(err.message)}</div>`;
+    showToast('AI Find error — see panel', 'error');
+  }
+
+  btn.disabled = false;
+}
+
+function addAiVideo(id, title, thumb, duration, durationSec) {
+  const videos = getVideos();
+  if (videos.some(v => v.id === id)) { showToast('Already in queue', ''); return; }
+  videos.push({ id, title, thumb, watched: false, duration, durationSec });
+  savePersist();
+  renderPlaylist();
+  updateStats();
+  showToast(`Added: ${title.slice(0, 36)}…`, 'success');
+  // Update button state
+  const btn = document.getElementById(`aiAdd-${id}`);
+  const card = document.getElementById(`aicard-${id}`);
+  if (btn) { btn.textContent = '✓'; btn.classList.add('done'); }
+  if (card) card.classList.add('added');
+  if (currentIndex === -1) playVideo(0);
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
