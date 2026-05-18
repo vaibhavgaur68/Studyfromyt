@@ -1,0 +1,2441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study from YT</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080809;
+    --surface: #0e0e10;
+    --surface2: #141417;
+    --border: #1a1a1e;
+    --border2: #222228;
+    --accent: #e8c547;
+    --accent2: #c9a82a;
+    --accent-dim: rgba(232,197,71,.07);
+    --text: #edebe6;
+    --text2: #7a7880;
+    --muted: #3e3c44;
+    --watched-bg: #0c1410;
+    --watched-border: #162418;
+    --danger: #b83030;
+    --radius: 7px;
+  }
+
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+  /* ── HEADER ── */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; border-bottom: 1px solid var(--border);
+    background: var(--bg); position: sticky; top: 0; z-index: 100; height: 50px;
+  }
+  .logo { font-size: 13px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--text2); }
+  .logo span { color: #FF0000; }
+  .header-center { display: flex; align-items: center; gap: 18px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+  .header-center b { color: var(--text2); font-weight: 400; }
+  .goal-badge {
+    background: transparent; border: 1px solid var(--border2);
+    padding: 4px 14px; border-radius: 50px; font-size: 10px; font-weight: 700;
+    font-family: 'DM Mono', monospace; cursor: pointer; color: var(--text2);
+    transition: all .18s; letter-spacing: .05em; text-transform: uppercase;
+  }
+  .goal-badge:hover { border-color: var(--accent); color: var(--accent); }
+  .goal-badge.goal-met { border-color: #1e4a1e; color: #4a9a4a; }
+
+  /* ── LAYOUT ── */
+  .app { display: grid; grid-template-columns: 1fr 340px; height: calc(100vh - 50px); overflow: hidden; }
+
+  /* ── PLAYER SIDE ── */
+  .player-side { display: flex; flex-direction: column; border-right: 1px solid var(--border); overflow: hidden; }
+
+  .player-wrap { position: relative; background: #000; flex-shrink: 0; aspect-ratio: 16/9; width: 100%; }
+  .player-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
+
+  .empty-player {
+    width: 100%; height: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 10px; background: var(--surface);
+  }
+  .empty-player .icon { font-size: 28px; opacity: .1; }
+  .empty-player p { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); text-align: center; line-height: 1.9; letter-spacing: .03em; }
+
+  /* ── VIDEO INFO ── */
+  .video-info { padding: 14px 22px 10px; flex-shrink: 0; }
+  .video-title { font-size: 13px; font-weight: 700; margin-bottom: 5px; line-height: 1.45; letter-spacing: -.01em; }
+  .video-meta { display: flex; align-items: center; gap: 10px; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+
+  /* ── PROGRESS ── */
+  .progress-section { padding: 0 22px 14px; flex-shrink: 0; }
+  .progress-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+  .progress-label span { font-size: 9px; font-family: 'DM Mono', monospace; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .progress-label strong { font-size: 10px; color: var(--text2); font-family: 'DM Mono', monospace; font-weight: 400; }
+  .progress-track { height: 1px; background: var(--border2); border-radius: 1px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 1px; transition: width .6s cubic-bezier(.4,0,.2,1); }
+  .progress-steps { display: none; }
+
+  /* ── PLAYER CONTROLS ── */
+  .player-controls {
+    display: flex; align-items: center; gap: 5px;
+    padding: 10px 18px 14px; flex-shrink: 0;
+  }
+  .btn {
+    display: flex; align-items: center; gap: 4px; padding: 7px 13px;
+    border-radius: var(--radius); font-family: 'DM Mono', monospace; font-size: 11px;
+    font-weight: 500; cursor: pointer; border: 1px solid transparent;
+    transition: all .14s; white-space: nowrap; letter-spacing: .02em;
+  }
+  .btn-primary { background: var(--accent); color: #080809; border-color: var(--accent); font-weight: 700; }
+  .btn-primary:hover { background: var(--accent2); border-color: var(--accent2); }
+  .btn-ghost { background: transparent; color: var(--text2); border-color: var(--border2); }
+  .btn-ghost:hover { background: var(--surface2); color: var(--text); border-color: var(--border2); }
+  .btn:disabled { opacity: .2; cursor: not-allowed; }
+  .btn-skip { margin-left: auto; font-size: 10px; padding: 6px 10px; }
+  .btn-auto { font-size: 10px; padding: 6px 10px; }
+  .btn-auto.on { color: var(--accent); border-color: transparent; background: var(--accent-dim); }
+
+  /* ── QUEUE SIDE ── */
+  .queue-side { display: flex; flex-direction: column; overflow: hidden; background: var(--surface); }
+
+  /* ── PLAYLIST SELECTOR BAR ── */
+  .pl-bar {
+    display: flex; align-items: center;
+    border-bottom: 1px solid var(--border); flex-shrink: 0;
+    background: var(--bg); height: 42px; padding: 0 8px 0 16px;
+    position: relative;
+  }
+  .pl-current-btn {
+    flex: 1; display: flex; align-items: center; gap: 6px; background: none;
+    border: none; cursor: pointer; padding: 4px 6px; border-radius: 5px;
+    font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
+    color: var(--text); transition: background .14s; min-width: 0; text-align: left;
+  }
+  .pl-current-btn:hover { background: var(--surface2); }
+  .pl-current-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+  .pl-arrow { font-size: 8px; color: var(--muted); flex-shrink: 0; transition: transform .2s; }
+  .pl-arrow.open { transform: rotate(180deg); }
+  .pl-new-btn {
+    flex-shrink: 0; background: none; border: 1px solid var(--border2);
+    border-radius: 5px; padding: 4px 10px; font-family: 'DM Mono', monospace;
+    font-size: 10px; color: var(--muted); cursor: pointer; transition: all .14s; letter-spacing: .04em;
+  }
+  .pl-new-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── PLAYLIST DROPDOWN ── */
+  .pl-dropdown {
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-top: none; z-index: 50; max-height: 0; overflow: hidden;
+    transition: max-height .2s cubic-bezier(.4,0,.2,1);
+  }
+  .pl-dropdown.open { max-height: 260px; overflow-y: auto; }
+  .pl-dropdown::-webkit-scrollbar { width: 3px; }
+  .pl-dropdown::-webkit-scrollbar-thumb { background: var(--border2); }
+  .pl-item {
+    display: flex; align-items: center; gap: 8px; padding: 9px 16px;
+    cursor: pointer; transition: background .1s; border-bottom: 1px solid var(--border);
+  }
+  .pl-item:last-child { border-bottom: none; }
+  .pl-item:hover { background: var(--surface); }
+  .pl-item.active-pl { background: var(--surface); }
+  .pl-item-name { flex: 1; font-size: 12px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pl-item-count { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); flex-shrink: 0; }
+  .pl-item-actions { display: flex; gap: 2px; flex-shrink: 0; }
+  .pl-icon-btn {
+    background: none; border: none; cursor: pointer; padding: 3px 6px;
+    border-radius: 4px; font-size: 11px; color: var(--muted); transition: all .14s; line-height: 1;
+  }
+  .pl-icon-btn:hover { color: var(--text2); }
+  .pl-icon-btn.del:hover { color: var(--danger); }
+  .pl-active-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .pl-inactive-dot { width: 4px; height: 4px; flex-shrink: 0; }
+
+  /* ── PANEL TABS ── */
+  .panel-tabs {
+    display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    padding: 0 12px; position: relative; background: var(--bg);
+  }
+  .panel-tab {
+    padding: 12px 10px; font-size: 10px; font-weight: 700; font-family: 'DM Mono', monospace;
+    color: var(--muted); background: none; border: none; cursor: pointer;
+    border-bottom: 1px solid transparent; margin-bottom: -1px;
+    transition: color .14s; letter-spacing: .06em; text-transform: uppercase;
+  }
+  .panel-tab:hover { color: var(--text2); }
+  .panel-tab.active { color: var(--text); border-bottom-color: var(--text2); }
+  .tab-count {
+    display: inline-block; padding: 0 4px; font-size: 9px;
+    color: var(--muted); margin-left: 3px; vertical-align: middle;
+  }
+  .add-trigger {
+    margin-left: auto; align-self: center;
+    display: flex; align-items: center; gap: 5px;
+    padding: 5px 12px 5px 9px; border-radius: 50px;
+    background: var(--accent); color: #080809; border: none;
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700;
+    cursor: pointer; transition: background .14s; flex-shrink: 0; letter-spacing: .03em;
+    line-height: 1;
+  }
+  .add-trigger:hover { background: var(--accent2); }
+  .add-trigger.open { background: var(--surface2); color: var(--text2); border: 1px solid var(--border2); }
+
+  /* ── AI FIND BUTTON ── */
+  .ai-find-btn {
+    align-self: center; display: flex; align-items: center; gap: 5px;
+    padding: 5px 11px 5px 8px; border-radius: 50px;
+    background: transparent; color: var(--text2);
+    border: 1px solid var(--border2);
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700;
+    cursor: pointer; transition: all .16s; flex-shrink: 0; letter-spacing: .03em;
+    line-height: 1; margin-left: 6px;
+  }
+  .ai-find-btn:hover { border-color: #a78bfa; color: #a78bfa; background: rgba(167,139,250,.07); }
+  .ai-find-btn.open { border-color: #a78bfa; color: #a78bfa; background: rgba(167,139,250,.1); }
+  .ai-find-btn .ai-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #a78bfa; flex-shrink: 0;
+    box-shadow: 0 0 6px #a78bfa;
+    animation: ai-pulse 2s ease-in-out infinite;
+  }
+  @keyframes ai-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.85)} }
+
+  /* ── AI FIND PANEL ── */
+  .ai-panel-wrap {
+    max-height: 0; overflow: hidden; flex-shrink: 0;
+    transition: max-height .24s cubic-bezier(.4,0,.2,1);
+    border-bottom: 1px solid transparent;
+  }
+  .ai-panel-wrap.open {
+    max-height: 600px;
+    border-bottom-color: var(--border);
+  }
+  .ai-panel {
+    background: var(--bg);
+    padding: 10px 12px 12px;
+  }
+
+  /* Search row */
+  .ai-search-row { display: flex; gap: 7px; align-items: center; margin-bottom: 10px; }
+  .ai-input {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 8px 11px;
+    font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text);
+    outline: none; transition: border-color .18s; min-width: 0;
+  }
+  .ai-input:focus { border-color: #a78bfa; }
+  .ai-input::placeholder { color: var(--muted); }
+  .ai-go-btn {
+    flex-shrink: 0; padding: 8px 14px; border-radius: var(--radius);
+    background: #a78bfa; color: #080809; border: none;
+    font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700;
+    cursor: pointer; transition: background .14s; letter-spacing: .03em;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .ai-go-btn:hover { background: #8b6ef0; }
+  .ai-go-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+  /* Groq key row */
+  .ai-key-row {
+    display: flex; gap: 6px; align-items: center;
+    margin-bottom: 10px;
+  }
+  .ai-key-input {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 6px 10px;
+    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text);
+    outline: none; transition: border-color .18s; min-width: 0;
+  }
+  .ai-key-input:focus { border-color: #a78bfa; }
+  .ai-key-input::placeholder { color: var(--muted); }
+  .ai-key-save-btn {
+    flex-shrink: 0; padding: 5px 10px; border-radius: var(--radius);
+    background: none; border: 1px solid var(--border2);
+    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted);
+    cursor: pointer; transition: all .14s;
+  }
+  .ai-key-save-btn:hover { border-color: #a78bfa; color: #a78bfa; }
+  .ai-key-label {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    color: var(--muted); letter-spacing: .06em; text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  /* Status / thinking */
+  .ai-status {
+    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted);
+    padding: 4px 0 8px; display: none; align-items: center; gap: 8px;
+  }
+  .ai-status.show { display: flex; }
+  .ai-spinner {
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 1.5px solid #a78bfa; border-top-color: transparent;
+    animation: spin .7s linear infinite; flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Results */
+  .ai-results { display: flex; flex-direction: column; gap: 8px; max-height: 340px; overflow-y: auto; padding-right: 2px; }
+  .ai-results::-webkit-scrollbar { width: 3px; }
+  .ai-results::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  .ai-result-card {
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 9px 10px;
+    display: flex; gap: 9px; align-items: flex-start;
+    transition: border-color .16s;
+  }
+  .ai-result-card:hover { border-color: #a78bfa44; }
+  .ai-result-card.added { border-color: #4a7a4a88; }
+
+  .ai-result-thumb {
+    width: 72px; height: 40px; border-radius: 4px;
+    object-fit: cover; flex-shrink: 0; background: var(--surface);
+  }
+  .ai-result-body { flex: 1; min-width: 0; }
+  .ai-result-title {
+    font-size: 11px; font-weight: 600; line-height: 1.4; color: var(--text);
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    margin-bottom: 4px;
+  }
+  .ai-result-meta {
+    display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin-bottom: 4px;
+  }
+  .ai-result-badge {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    color: var(--muted); background: var(--surface);
+    border: 1px solid var(--border); border-radius: 3px; padding: 1px 5px;
+    white-space: nowrap;
+  }
+  .ai-result-badge.rank-1 { border-color: #a78bfa55; color: #a78bfa; }
+  .ai-result-reason {
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    color: #7a7a9a; line-height: 1.55; font-style: italic;
+  }
+  .ai-result-add {
+    flex-shrink: 0; padding: 5px 9px; border-radius: 5px;
+    background: none; border: 1px solid var(--border2);
+    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 700;
+    color: var(--muted); cursor: pointer; transition: all .14s;
+    align-self: center; white-space: nowrap;
+  }
+  .ai-result-add:hover { border-color: #a78bfa; color: #a78bfa; background: rgba(167,139,250,.08); }
+  .ai-result-add.done { border-color: #4a7a4a; color: #5faa5f; background: rgba(74,122,74,.08); pointer-events: none; }
+
+  .ai-empty { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); text-align: center; padding: 20px 0; }
+
+  /* Refresh button in pl-bar */
+  .pl-refresh-btn {
+    flex-shrink: 0; background: none; border: none; cursor: pointer;
+    padding: 5px 6px; border-radius: 5px; color: var(--muted);
+    transition: color .14s; line-height: 0; margin-right: 2px;
+    display: flex; align-items: center;
+  }
+  .pl-refresh-btn:hover { color: var(--accent); }
+  .pl-refresh-btn.spinning .refresh-icon {
+    animation: spin-refresh .7s linear infinite;
+  }
+  @keyframes spin-refresh { to { transform: rotate(360deg); } }
+
+  /* ── INLINE ADD ROW ── */
+  .add-row-wrap {
+    max-height: 0; overflow: hidden;
+    transition: max-height .22s cubic-bezier(.4,0,.2,1); flex-shrink: 0;
+  }
+  .add-row-wrap.open { max-height: 54px; border-bottom: 1px solid var(--border); }
+  .add-row { display: flex; align-items: center; gap: 7px; padding: 8px 12px; }
+  .url-input {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 7px 11px; font-family: 'DM Mono', monospace;
+    font-size: 11px; color: var(--text); outline: none; transition: border-color .18s;
+  }
+  .url-input:focus { border-color: var(--accent); }
+  .url-input::placeholder { color: var(--muted); }
+  .add-confirm {
+    background: var(--accent); color: #080809; border: none; border-radius: var(--radius);
+    padding: 7px 13px; font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700;
+    cursor: pointer; transition: background .14s; white-space: nowrap; flex-shrink: 0; letter-spacing: .04em;
+  }
+  .add-confirm:hover { background: var(--accent2); }
+
+  /* ── PANEL VIEWS ── */
+  .panel-view { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+  .panel-view.active { display: flex; }
+
+  /* ── QUEUE HEADER ── */
+  .queue-header-bar { padding: 9px 12px 7px; flex-shrink: 0; }
+  .queue-header-top { display: flex; align-items: center; justify-content: space-between; }
+  .queue-label { font-size: 9px; font-weight: 700; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; font-family: 'DM Mono', monospace; }
+  .queue-count { display: none; }
+  .queue-time-left { display: none; }
+
+  .queue-actions { display: flex; align-items: center; gap: 2px; }
+
+  .icon-btn {
+    background: none; border: none; cursor: pointer; padding: 6px; border-radius: 5px;
+    color: var(--muted); transition: color .14s; line-height: 0; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .icon-btn:hover { color: var(--text2); }
+  .icon-btn.active-filter { color: var(--accent); }
+
+  /* Eye SVG strike animation */
+  .eye-strike {
+    stroke-dasharray: 32;
+    stroke-dashoffset: 32;
+    transition: stroke-dashoffset .28s cubic-bezier(.4,0,.2,1);
+    opacity: 0;
+  }
+  .icon-btn.active-filter .eye-strike {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  /* Fade the pupil when filter is on */
+  .icon-btn.active-filter .eye-svg circle {
+    opacity: .3;
+    transition: opacity .2s;
+  }
+
+  .clear-btn {
+    background: none; border: none; cursor: pointer; padding: 6px; border-radius: 5px;
+    color: var(--muted); transition: color .14s; line-height: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .clear-btn:hover { color: var(--danger); }
+
+  /* SEARCH ROW */
+  .search-row { margin-top: 6px; display: none; }
+  .search-row.open { display: block; }
+  .search-input {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 6px 11px; font-family: 'DM Mono', monospace;
+    font-size: 11px; color: var(--text); outline: none; transition: border-color .18s;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .search-input::placeholder { color: var(--muted); }
+
+  /* ── PLAYLIST ── */
+  .playlist { flex: 1; overflow-y: auto; padding: 5px 7px; }
+  .playlist::-webkit-scrollbar { width: 2px; }
+  .playlist::-webkit-scrollbar-track { background: transparent; }
+  .playlist::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  .empty-queue { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 6px; padding: 20px; }
+  .empty-queue p { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); text-align: center; line-height: 1.9; letter-spacing: .02em; }
+
+  .queue-item {
+    display: flex; align-items: center; gap: 9px; padding: 7px 8px;
+    border-radius: var(--radius); cursor: pointer; transition: background .12s;
+    border: 1px solid transparent; margin-bottom: 1px;
+  }
+  .queue-item:hover { background: var(--surface2); }
+  .queue-item.active { background: var(--surface2); border-color: rgba(232,197,71,.15); }
+  .queue-item.watched { opacity: .38; }
+  .queue-item.watched .item-title { text-decoration: line-through; }
+
+  .item-thumb { width: 66px; height: 37px; border-radius: 4px; object-fit: cover; flex-shrink: 0; background: var(--surface2); }
+  .item-body { flex: 1; min-width: 0; }
+  .item-title { font-size: 11px; font-weight: 600; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--text); }
+  .item-meta { display: flex; align-items: center; gap: 5px; margin-top: 3px; }
+  .item-badge { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+  .item-badge.done-badge { color: #4a9a4a; }
+  .item-duration { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+  .item-duration::before { content: '·'; margin-right: 4px; color: var(--border2); }
+  .item-actions { display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; }
+  .item-del { background: none; border: none; color: transparent; cursor: pointer; font-size: 11px; padding: 2px 4px; border-radius: 3px; transition: all .14s; line-height: 1; }
+  .queue-item:hover .item-del { color: var(--muted); }
+  .item-del:hover { color: var(--danger) !important; }
+  .item-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); }
+
+  /* ── DRAG & DROP ── */
+  .item-drag {
+    display: flex; align-items: center; justify-content: center;
+    width: 14px; flex-shrink: 0; cursor: grab; color: transparent;
+    transition: color .14s; padding: 2px 0; touch-action: none;
+  }
+  .queue-item:hover .item-drag { color: var(--muted); }
+  .item-drag:active { cursor: grabbing; }
+  .queue-item.dragging { opacity: .25; border-color: transparent !important; background: transparent !important; }
+  .queue-item.drag-over { border-color: var(--accent) !important; background: var(--accent-dim) !important; transform: scale(1.01); }
+  .queue-item[draggable="true"] { user-select: none; }
+
+  /* ── STATS BAR ── */
+  .stats-bar { padding: 8px 14px; border-top: 1px solid var(--border); background: var(--bg); flex-shrink: 0; }
+  .stats-row { display: flex; }
+  .stat { flex: 1; text-align: center; }
+  .stat + .stat { border-left: 1px solid var(--border); }
+  .stat-val { font-size: 13px; font-weight: 700; color: var(--text2); font-family: 'DM Mono', monospace; letter-spacing: -.01em; }
+  .stat-lbl { font-size: 8px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 1px; letter-spacing: .08em; text-transform: uppercase; }
+
+  /* ── TIMESTAMPS TAB ── */
+  .timestamps-view { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .timestamps-header { padding: 12px 14px 0; flex-shrink: 0; }
+  .timestamps-video-label {
+    font-size: 10px; font-family: 'DM Mono', monospace; color: var(--muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    padding-bottom: 10px; border-bottom: 1px solid var(--border);
+  }
+  .timestamps-video-label span { color: var(--text2); }
+  .timestamps-list { flex: 1; overflow-y: auto; padding: 5px 7px; display: flex; flex-direction: column; gap: 1px; }
+  .timestamps-list::-webkit-scrollbar { width: 2px; }
+  .timestamps-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+  .chapter-btn {
+    display: flex; align-items: center; gap: 10px; padding: 7px 9px;
+    border-radius: var(--radius); border: none; background: none;
+    cursor: pointer; text-align: left; transition: background .12s; width: 100%;
+  }
+  .chapter-btn:hover { background: var(--surface2); }
+  .chapter-btn.active { background: var(--surface2); }
+  .chapter-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); min-width: 36px; flex-shrink: 0; }
+  .chapter-name { font-size: 11px; font-weight: 600; color: var(--text2); line-height: 1.3; }
+  .chapter-btn.active .chapter-name { color: var(--text); }
+  .ts-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 8px; padding: 20px; text-align: center; }
+  .ts-state-icon { font-size: 20px; opacity: .15; }
+  .ts-state p { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); line-height: 1.9; }
+  .ts-state .ts-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 2px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner { width: 13px; height: 13px; border: 1.5px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0; }
+  .ts-loading { display: flex; align-items: center; gap: 10px; padding: 14px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+  .ts-tab-count { transition: opacity .2s; }
+
+  /* ── STATS VIEW ── */
+  .stats-view-inner { flex: 1; overflow-y: auto; padding: 12px 10px; display: flex; flex-direction: column; gap: 8px; }
+  .stats-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+  .stats-card-title { font-size: 9px; font-family: 'DM Mono', monospace; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 12px; }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stats-big { font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -.02em; }
+  .stats-sub { font-size: 9px; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 3px; letter-spacing: .08em; text-transform: uppercase; }
+  .goal-bar-track { height: 1px; background: var(--border2); border-radius: 1px; overflow: hidden; margin: 12px 0 8px; }
+  .goal-bar-fill { height: 100%; background: var(--accent); border-radius: 1px; transition: width .5s; }
+  .small-btn { background: none; border: 1px solid var(--border2); border-radius: 5px; padding: 5px 12px; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); cursor: pointer; transition: all .14s; letter-spacing: .04em; }
+  .small-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .kbd-row { display: flex; justify-content: space-between; align-items: center; font-family: 'DM Mono', monospace; font-size: 11px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .kbd-row:last-child { border-bottom: none; }
+  .kbd-row span { color: var(--text2); font-size: 11px; }
+  kbd { background: var(--bg); border: 1px solid var(--border2); border-radius: 4px; padding: 2px 7px; color: var(--text2); font-size: 10px; font-family: 'DM Mono', monospace; }
+
+  /* ── MODALS ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity .18s;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border2); border-radius: 12px;
+    padding: 24px; width: 320px; max-width: 94vw;
+    transform: translateY(8px) scale(.98); transition: transform .2s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+  .modal h3 { font-size: 13px; font-weight: 700; margin-bottom: 4px; letter-spacing: -.01em; }
+  .modal p { font-size: 11px; color: var(--muted); margin-bottom: 16px; font-family: 'DM Mono', monospace; line-height: 1.7; }
+  .modal input {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 10px 14px; font-family: 'DM Mono', monospace;
+    font-size: 13px; color: var(--text); outline: none; margin-bottom: 14px; transition: border-color .18s;
+  }
+  .modal input:focus { border-color: var(--accent); }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+  /* IMPORT PROGRESS BAR */
+  .import-progress {
+    position: fixed; bottom: 52px; left: 50%; transform: translateX(-50%);
+    background: var(--surface); border: 1px solid var(--border2); border-radius: 10px;
+    padding: 12px 18px; z-index: 400; min-width: 240px; max-width: 320px;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .import-progress.show { opacity: 1; }
+  .import-progress-label { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
+  .import-track { height: 1px; background: var(--surface2); border-radius: 1px; overflow: hidden; }
+  .import-fill { height: 100%; background: var(--accent); border-radius: 1px; transition: width .3s; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(8px);
+    background: var(--surface2); border: 1px solid var(--border2); border-radius: 50px;
+    padding: 8px 18px; font-size: 11px; font-family: 'DM Mono', monospace;
+    z-index: 500; opacity: 0; transition: all .2s; white-space: nowrap; pointer-events: none;
+    letter-spacing: .02em;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.success { border-color: #1e3e1e; color: #4a9a4a; }
+  .toast.error { border-color: rgba(184,48,48,.4); color: #d05050; }
+
+  /* ── NOTES PANEL ── */
+  .notes-toggle-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: none; border: 1px solid var(--border2);
+    border-radius: 50px; padding: 3px 10px 3px 7px;
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    color: var(--muted); cursor: pointer; transition: all .16s;
+    letter-spacing: .03em; white-space: nowrap;
+  }
+  .notes-toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .notes-toggle-btn.has-notes { border-color: #4a7a4a; color: #5faa5f; background: rgba(74,122,74,.08); }
+  .notes-toggle-btn.panel-open { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+  .notes-toggle-btn svg { flex-shrink: 0; }
+
+  .notes-panel {
+    flex-shrink: 0; border-top: 1px solid var(--border);
+    background: var(--surface); display: flex; flex-direction: column;
+    max-height: 0; overflow: hidden;
+    transition: max-height .28s cubic-bezier(.4,0,.2,1);
+  }
+  .notes-panel.open { max-height: 420px; }
+
+  .notes-panel-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px 8px; flex-shrink: 0; border-bottom: 1px solid var(--border);
+  }
+  .notes-panel-title {
+    font-size: 10px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--text2); font-family: 'DM Mono', monospace;
+  }
+  .notes-panel-title span {
+    font-weight: 400; color: var(--muted); margin-left: 6px;
+    text-transform: none; letter-spacing: 0; font-size: 10px;
+    max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    display: inline-block; vertical-align: middle;
+  }
+  .notes-close-btn {
+    background: none; border: none; cursor: pointer; color: var(--muted);
+    font-size: 16px; line-height: 1; padding: 0 2px; transition: color .14s;
+  }
+  .notes-close-btn:hover { color: var(--text); }
+
+  .notes-link-row {
+    display: flex; align-items: center; gap: 7px;
+    padding: 9px 14px; flex-shrink: 0; border-bottom: 1px solid var(--border);
+  }
+  .notes-input {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 6px 10px;
+    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text);
+    outline: none; transition: border-color .18s; min-width: 0;
+  }
+  .notes-input:focus { border-color: var(--accent); }
+  .notes-input::placeholder { color: var(--muted); }
+  .notes-save-btn {
+    flex-shrink: 0; background: var(--accent); color: #080809;
+    border: none; border-radius: var(--radius); padding: 6px 12px;
+    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 700;
+    cursor: pointer; transition: background .14s; letter-spacing: .04em;
+  }
+  .notes-save-btn:hover { background: var(--accent2); }
+  .notes-clear-btn {
+    flex-shrink: 0; background: none; border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 5px 9px;
+    font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted);
+    cursor: pointer; transition: all .14s;
+  }
+  .notes-clear-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+  .notes-iframe-wrap {
+    flex: 1; position: relative; overflow: hidden; min-height: 0;
+  }
+  .notes-iframe-wrap iframe {
+    width: 100%; height: 100%; border: none; display: block;
+    background: var(--surface2);
+  }
+  .notes-empty-state {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 8px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--muted); text-align: center; padding: 20px;
+  }
+  .notes-empty-state .ne-icon { font-size: 22px; opacity: .2; margin-bottom: 2px; }
+  .notes-empty-state p { line-height: 1.7; }
+  .notes-empty-state code {
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 4px; padding: 1px 6px; font-size: 10px; color: var(--text2);
+  }
+
+  /* queue-item notes indicator dot */
+  .item-note-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: #5faa5f; flex-shrink: 0; margin-left: 1px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 860px) {
+    .app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: auto; }
+    .player-side { border-right: none; border-bottom: 1px solid var(--border); }
+    .queue-side { height: 55vh; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Study from <span>YT</span></div>
+  <div class="header-center">
+    <span><b id="watchTimer">00:00</b> watched</span>
+    <span id="goalStatus" style="display:none"><b id="goalProgress">0/0</b> goal</span>
+  </div>
+  <button class="goal-badge" id="goalBtn" onclick="openGoalModal()">Set Goal</button>
+</header>
+
+<div class="app">
+
+  <!-- ── LEFT: PLAYER ── -->
+  <div class="player-side">
+    <div class="player-wrap" id="playerWrap">
+      <div class="empty-player" id="emptyPlayer">
+        <div class="icon">▶</div>
+        <p>Add videos to your queue<br>and start watching</p>
+      </div>
+      <div id="ytPlayer" style="display:none; width:100%; height:100%;"></div>
+    </div>
+
+    <div class="video-info" id="videoInfo" style="display:none;">
+      <div class="video-title" id="videoTitle">—</div>
+      <div class="video-meta" style="flex-wrap:wrap; gap:8px;">
+        <span id="videoIndex">—</span>
+        <span id="videoDurationMeta"></span>
+        <span id="watchedStatus"></span>
+        <button class="notes-toggle-btn" id="notesToggleBtn" onclick="toggleNotesPanel()" title="View / attach notes for this video">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          Notes
+        </button>
+      </div>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-label">
+        <span>PLAYLIST PROGRESS</span>
+        <strong id="progressText">0 / 0</strong>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-steps" id="progressSteps"></div>
+    </div>
+
+    <div class="player-controls">
+      <button class="btn btn-ghost" id="prevBtn" onclick="playPrev()" disabled>‹ Prev</button>
+      <button class="btn btn-primary" id="markBtn" onclick="markWatched()" disabled>Mark Watched</button>
+      <button class="btn btn-ghost" id="nextBtn" onclick="playNext()" disabled>Next ›</button>
+      <button class="btn btn-ghost btn-skip" id="skipBtn" onclick="skipVideo()" disabled>Skip</button>
+      <button class="btn btn-ghost btn-auto on" id="autoBtn" onclick="toggleAutoAdvance()" title="Toggle auto-advance">Auto</button>
+    </div>
+
+    <!-- ── NOTES PANEL ── -->
+    <div class="notes-panel" id="notesPanel">
+      <div class="notes-panel-head">
+        <div class="notes-panel-title">
+          Notes
+          <span id="notesPanelVideoName">—</span>
+        </div>
+        <button class="notes-close-btn" onclick="toggleNotesPanel(false)" title="Close notes">✕</button>
+      </div>
+      <div class="notes-link-row">
+        <input class="notes-input" id="notesInput" type="text"
+          placeholder="Paste Google Drive / Docs link…"
+          onkeydown="if(event.key==='Enter') saveNotesLink()">
+        <button class="notes-save-btn" onclick="saveNotesLink()">Save</button>
+        <button class="notes-clear-btn" id="notesClearBtn" onclick="clearNotesLink()" style="display:none" title="Remove notes link">✕</button>
+      </div>
+      <div class="notes-iframe-wrap" id="notesIframeWrap">
+        <div class="notes-empty-state" id="notesEmptyState">
+          <div class="ne-icon">📄</div>
+          <p>Paste a Google Drive or Google Docs link above<br>and click <strong>Save</strong> to view your notes here.</p>
+          <p style="margin-top:6px;font-size:10px;">Make sure the file is set to<br><code>Anyone with the link can view</code></p>
+        </div>
+        <iframe id="notesIframe" src="" style="display:none;" allow="autoplay" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── RIGHT: QUEUE PANEL ── -->
+  <div class="queue-side">
+
+    <!-- PLAYLIST SELECTOR BAR -->
+    <div class="pl-bar" id="plBar">
+      <button class="pl-current-btn" onclick="togglePlDropdown()">
+        <span class="pl-current-name" id="plCurrentName">My Queue</span>
+        <span class="pl-arrow" id="plArrow">▼</span>
+      </button>
+      <!-- Refresh button — only shown when playlist was imported from YouTube -->
+      <button class="pl-refresh-btn" id="refreshBtn" onclick="refreshPlaylist()" title="Sync new videos from YouTube" style="display:none">
+        <svg class="refresh-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+      </button>
+      <button class="pl-new-btn" onclick="openNewPlaylistModal()">+ New</button>
+      <div class="pl-dropdown" id="plDropdown"></div>
+    </div>
+
+    <!-- TABS -->
+    <div class="panel-tabs">
+      <button class="panel-tab active" id="tabQueue" onclick="switchTab('queue')">
+        Queue <span class="tab-count" id="tabQueueCount">0</span>
+      </button>
+      <button class="panel-tab" id="tabTimestamps" onclick="switchTab('timestamps')">
+        Timestamps <span class="tab-count ts-tab-count" id="tabTsCount" style="opacity:0">0</span>
+      </button>
+      <button class="panel-tab" id="tabStats" onclick="switchTab('stats')">
+        Stats
+      </button>
+      <!-- Add button — prominent pill, always visible -->
+      <button class="add-trigger" id="addTrigger" onclick="toggleAddRow()" title="Add video or playlist (/)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add
+      </button>
+      <!-- AI Find button -->
+      <button class="ai-find-btn" id="aiFindBtn" onclick="toggleAiPanel()" title="Ask AI to find lectures for you">
+        <div class="ai-dot"></div>
+        AI Find
+      </button>
+    </div>
+
+    <!-- ADD ROW -->
+    <div class="add-row-wrap" id="addRowWrap">
+      <div class="add-row">
+        <input class="url-input" id="urlInput" type="text"
+          placeholder="Video URL, ID, or playlist URL…"
+          onkeydown="if(event.key==='Enter')handleAdd(); if(event.key==='Escape')toggleAddRow(false)">
+        <button class="add-confirm" onclick="handleAdd()">Add</button>
+      </div>
+    </div>
+
+    <!-- ── AI FIND PANEL ── -->
+    <div class="ai-panel-wrap" id="aiPanelWrap">
+      <div class="ai-panel">
+        <!-- Groq API key -->
+        <div class="ai-key-label">Groq API Key</div>
+        <div class="ai-key-row">
+          <input class="ai-key-input" id="groqKeyInput" type="password"
+            placeholder="gsk_…  (saved locally, never sent anywhere else)"
+            onkeydown="if(event.key==='Enter') saveGroqKey()">
+          <button class="ai-key-save-btn" onclick="saveGroqKey()">Save</button>
+        </div>
+        <!-- Natural language query -->
+        <div class="ai-search-row">
+          <input class="ai-input" id="aiQueryInput" type="text"
+            placeholder="e.g. 30 min lecture on neural networks from this year…"
+            onkeydown="if(event.key==='Enter') runAiFind(); if(event.key==='Escape') toggleAiPanel(false)">
+          <button class="ai-go-btn" id="aiGoBtn" onclick="runAiFind()">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Find
+          </button>
+        </div>
+        <!-- Thinking status -->
+        <div class="ai-status" id="aiStatus">
+          <div class="ai-spinner"></div>
+          <span id="aiStatusText">Thinking…</span>
+        </div>
+        <!-- Results list -->
+        <div class="ai-results" id="aiResults"></div>
+      </div>
+    </div>
+
+    <!-- ── QUEUE VIEW ── -->
+    <div class="panel-view active" id="viewQueue">
+      <div class="queue-header-bar">
+        <!-- hidden but kept so JS doesn't crash -->
+        <span id="queueCount" style="display:none"></span>
+        <span id="queueTimeLeft" style="display:none"></span>
+        <div class="queue-header-top">
+          <span class="queue-label">Up Next</span>
+          <div class="queue-actions">
+            <!-- Eye / Eye-off filter button -->
+            <button class="icon-btn" id="filterBtn" onclick="toggleWatchedFilter()" title="Toggle unwatched only">
+              <svg class="eye-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+                <line class="eye-strike" x1="2" y1="2" x2="22" y2="22"/>
+              </svg>
+            </button>
+            <!-- Search button -->
+            <button class="icon-btn" id="searchBtn" onclick="toggleSearch()" title="Search queue">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </button>
+            <!-- Clear button -->
+            <button class="clear-btn" onclick="confirmClearAll()" title="Clear all">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6M14 11v6"/>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="search-row" id="searchRow">
+          <input class="search-input" id="searchInput" placeholder="Search queue…" oninput="onSearchInput()">
+        </div>
+      </div>
+      <div class="playlist" id="playlist">
+        <div class="empty-queue"><p>Your queue is empty.<br>Tap + to add a video.</p></div>
+      </div>
+      <div class="stats-bar">
+        <div class="stats-row">
+          <div class="stat"><div class="stat-val" id="statTotal">0</div><div class="stat-lbl">TOTAL</div></div>
+          <div class="stat"><div class="stat-val" id="statWatched">0</div><div class="stat-lbl">WATCHED</div></div>
+          <div class="stat"><div class="stat-val" id="statLeft">0</div><div class="stat-lbl">LEFT</div></div>
+          <div class="stat"><div class="stat-val" id="statPct">0%</div><div class="stat-lbl">DONE</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TIMESTAMPS VIEW ── -->
+    <div class="panel-view" id="viewTimestamps">
+      <div class="timestamps-view">
+        <div class="timestamps-header">
+          <div class="timestamps-video-label" id="tsVideoLabel">No video playing</div>
+        </div>
+        <div class="timestamps-list" id="timestampsList">
+          <div class="ts-state">
+            <div class="ts-state-icon">📍</div>
+            <p>Timestamps appear here<br>when a video is loaded.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STATS VIEW ── -->
+    <div class="panel-view" id="viewStats">
+      <div class="stats-view-inner">
+
+        <div class="stats-card">
+          <div class="stats-card-title">Session</div>
+          <div class="stats-grid">
+            <div>
+              <div class="stats-big" id="statsTimerLarge">00:00</div>
+              <div class="stats-sub">WATCH TIME</div>
+            </div>
+            <div>
+              <div class="stats-big" id="statsWatchedLarge">0</div>
+              <div class="stats-sub">WATCHED</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-card">
+          <div class="stats-card-title">Queue Time</div>
+          <div class="stats-grid">
+            <div>
+              <div class="stats-big" id="statsTotalTime">—</div>
+              <div class="stats-sub">TOTAL</div>
+            </div>
+            <div>
+              <div class="stats-big" id="statsRemainingTime">—</div>
+              <div class="stats-sub">REMAINING</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-card">
+          <div class="stats-card-title">Daily Goal</div>
+          <div id="goalDisplay" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">No goal set.</div>
+          <div class="goal-bar-track"><div class="goal-bar-fill" id="goalBarFill" style="width:0%"></div></div>
+          <button class="small-btn" onclick="openGoalModal()">Edit Goal</button>
+        </div>
+
+        <div class="stats-card">
+          <div class="stats-card-title">Shortcuts</div>
+          <div class="kbd-row"><span>Next video</span><kbd>→</kbd></div>
+          <div class="kbd-row"><span>Prev video</span><kbd>←</kbd></div>
+          <div class="kbd-row"><span>Mark watched</span><kbd>W</kbd></div>
+          <!-- FIX: new / shortcut documented here -->
+          <div class="kbd-row"><span>Add video</span><kbd>/</kbd></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- GOAL MODAL -->
+<div class="modal-overlay" id="goalModal">
+  <div class="modal">
+    <h3>Set Daily Goal</h3>
+    <p>How many videos do you want to watch today?</p>
+    <input type="number" id="goalInput" min="1" max="200" placeholder="e.g. 5" onkeydown="if(event.key==='Enter')saveGoal()">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeGoalModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveGoal()">Set Goal</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW PLAYLIST MODAL -->
+<div class="modal-overlay" id="newPlModal">
+  <div class="modal">
+    <h3>New Playlist</h3>
+    <p>Give your new playlist a name.</p>
+    <input type="text" id="newPlInput" placeholder="e.g. JS Course, Design Talks…" maxlength="40" onkeydown="if(event.key==='Enter')confirmNewPlaylist(); if(event.key==='Escape')closeNewPlModal()">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeNewPlModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmNewPlaylist()">Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- RENAME PLAYLIST MODAL -->
+<div class="modal-overlay" id="renamePlModal">
+  <div class="modal">
+    <h3>Rename Playlist</h3>
+    <p>Enter a new name.</p>
+    <input type="text" id="renamePlInput" placeholder="Playlist name…" maxlength="40" onkeydown="if(event.key==='Enter')confirmRenamePlaylist(); if(event.key==='Escape')closeRenamePlModal()">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeRenamePlModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmRenamePlaylist()">Rename</button>
+    </div>
+  </div>
+</div>
+
+<!-- FIX: custom confirm modal replaces native window.confirm() everywhere -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <h3 id="confirmTitle">Are you sure?</h3>
+    <p id="confirmMsg">This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeConfirmModal()">Cancel</button>
+      <button class="btn btn-primary" id="confirmOkBtn"
+        style="background:var(--danger);border-color:var(--danger);color:#fff">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT PROGRESS -->
+<div class="import-progress" id="importProgress">
+  <div class="import-progress-label">
+    <span id="importLabel">Importing playlist…</span>
+    <span id="importCount">0 / 0</span>
+  </div>
+  <div class="import-track"><div class="import-fill" id="importFill" style="width:0%"></div></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════════════════
+const YT_API_KEY = 'AIzaSyCDAskn-atleKjmh_RcMXTbjz1l88kMqdA';
+
+let playlists = [];
+let activePLId = '';
+let currentIndex = -1;
+let ytPlayer = null, playerReady = false;
+let sessionSeconds = 0, dailyGoal = 0, dailyWatchedCount = 0; // FIX: added dailyWatchedCount
+let autoAdvance = true;
+let addRowOpen = false, activeTab = 'queue';
+let searchQuery = '', showUnwatchedOnly = false;
+let plDropdownOpen = false;
+let renamingPLId = null;
+let chapters = [], chapterTrackInterval = null;
+let timerInterval = null;      // FIX: store interval so it can be cleared
+let confirmCallback = null;    // FIX: for custom confirm modal
+let saveResumeInterval = null; // interval that periodically saves playback position
+let dragSrcOrigIndex = -1;     // drag-and-drop source index
+let aiPanelOpen = false;       // AI Find panel open state
+
+const KEY_GROQ_KEY = 'sfyt_groq_key';
+
+const KEY_PLAYLISTS     = 'queue_playlists_v2';
+const KEY_ACTIVE_PL     = 'queue_active_pl';
+const KEY_GOAL          = 'queue_goal';
+const KEY_SESSION       = 'queue_session_'        + new Date().toDateString();
+const KEY_DAILY_WATCHED = 'queue_daily_watched_'  + new Date().toDateString(); // FIX: daily key
+const KEY_RESUME        = 'queue_resume_v1'; // persisted playback position for resume-on-reopen
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function getVideos() {
+  const pl = playlists.find(p => p.id === activePLId);
+  return pl ? pl.videos : [];
+}
+function getActivePL() { return playlists.find(p => p.id === activePLId); }
+function uid() { return 'pl_' + Math.random().toString(36).slice(2,9); }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════════════════
+function init() {
+  const raw = localStorage.getItem(KEY_PLAYLISTS);
+  if (raw) {
+    try { playlists = JSON.parse(raw); } catch { playlists = []; }
+  }
+  if (!playlists.length) {
+    playlists = [{ id: uid(), name: 'My Queue', videos: [] }];
+  }
+
+  activePLId = localStorage.getItem(KEY_ACTIVE_PL) || playlists[0].id;
+  if (!playlists.find(p => p.id === activePLId)) activePLId = playlists[0].id;
+
+  sessionSeconds    = parseInt(localStorage.getItem(KEY_SESSION)        || '0');
+  dailyGoal         = parseInt(localStorage.getItem(KEY_GOAL)           || '0');
+  dailyWatchedCount = parseInt(localStorage.getItem(KEY_DAILY_WATCHED)  || '0'); // FIX
+
+  updatePlBar();
+  renderPlaylist();
+  updateProgress();
+  updateStats();
+  updateGoalUI();
+  updateTimer();
+  startTimerInterval();
+  // Pre-fill Groq key if saved
+  const savedGroqKey = localStorage.getItem(KEY_GROQ_KEY);
+  if (savedGroqKey) document.getElementById('groqKeyInput').value = savedGroqKey;
+
+  // Resume last video position after a short delay (player needs to initialise)
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY_RESUME) || 'null');
+    if (saved && saved.plId === activePLId) {
+      const idx = getVideos().findIndex(v => v.id === saved.videoId);
+      if (idx !== -1) {
+        // small delay so the YT iframe has time to register
+        setTimeout(() => playVideo(idx), 300);
+      }
+    }
+  } catch {}
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// YOUTUBE API
+// ══════════════════════════════════════════════════════════════════════════════
+function loadYTAPI() {
+  const tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(tag);
+}
+function onYouTubeIframeAPIReady() {
+  ytPlayer = new YT.Player('ytPlayer', {
+    height: '100%', width: '100%',
+    playerVars: { rel: 0, modestbranding: 1, iv_load_policy: 3, fs: 1 },
+    events: {
+      onReady: () => { playerReady = true; },
+      onStateChange: onPlayerStateChange
+    }
+  });
+}
+function onPlayerStateChange(e) {
+  if (e.data === YT.PlayerState.ENDED && autoAdvance) {
+    clearResumeState(); // video finished — no need to resume it next time
+    markWatched();
+    setTimeout(() => playNext(), 800);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// FIX: extracted helper — same 4-line reset was copy-pasted 3 times before
+// ══════════════════════════════════════════════════════════════════════════════
+function resetPlayerUI() {
+  document.getElementById('emptyPlayer').style.display = 'flex';
+  document.getElementById('ytPlayer').style.display = 'none';
+  document.getElementById('videoInfo').style.display = 'none';
+  ['prevBtn','nextBtn','markBtn','skipBtn'].forEach(id => document.getElementById(id).disabled = true);
+  if (ytPlayer && playerReady) { try { ytPlayer.stopVideo(); } catch {} }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// FIX: custom confirm modal — replaces native window.confirm() everywhere
+// ══════════════════════════════════════════════════════════════════════════════
+function showConfirm(title, msg, okLabel, onOk) {
+  confirmCallback = onOk;
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').textContent = msg;
+  document.getElementById('confirmOkBtn').textContent = okLabel || 'Confirm';
+  document.getElementById('confirmModal').classList.add('open');
+}
+function closeConfirmModal() {
+  document.getElementById('confirmModal').classList.remove('open');
+  confirmCallback = null;
+}
+function executeConfirm() {
+  const cb = confirmCallback;
+  closeConfirmModal();
+  if (typeof cb === 'function') cb();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PLAYLIST MANAGEMENT
+// ══════════════════════════════════════════════════════════════════════════════
+function updatePlBar() {
+  const pl = getActivePL();
+  document.getElementById('plCurrentName').textContent = pl ? pl.name : '—';
+  renderPlDropdown();
+  updateRefreshBtn();
+}
+
+function updateRefreshBtn() {
+  const pl = getActivePL();
+  const btn = document.getElementById('refreshBtn');
+  btn.style.display = pl?.sourcePlaylistId ? 'flex' : 'none';
+}
+
+async function refreshPlaylist() {
+  const pl = getActivePL();
+  if (!pl?.sourcePlaylistId) return;
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  btn.disabled = true;
+  const prevCount = pl.videos.length;
+  await importPlaylist(pl.sourcePlaylistId);
+  btn.classList.remove('spinning');
+  btn.disabled = false;
+  const added = pl.videos.length - prevCount;
+  if (added <= 0) showToast('Already up to date', '');
+}
+
+function togglePlDropdown() {
+  plDropdownOpen = !plDropdownOpen;
+  document.getElementById('plDropdown').classList.toggle('open', plDropdownOpen);
+  document.getElementById('plArrow').classList.toggle('open', plDropdownOpen);
+  if (plDropdownOpen) renderPlDropdown();
+}
+function closePlDropdown() {
+  plDropdownOpen = false;
+  document.getElementById('plDropdown').classList.remove('open');
+  document.getElementById('plArrow').classList.remove('open');
+}
+
+function renderPlDropdown() {
+  const el = document.getElementById('plDropdown');
+  el.innerHTML = playlists.map(pl => `
+    <div class="pl-item ${pl.id === activePLId ? 'active-pl' : ''}" onclick="switchPlaylist('${pl.id}')">
+      <div class="${pl.id === activePLId ? 'pl-active-dot' : 'pl-inactive-dot'}"></div>
+      <span class="pl-item-name">${escHtml(pl.name)}</span>
+      <span class="pl-item-count">${pl.videos.length}</span>
+      <div class="pl-item-actions" onclick="event.stopPropagation()">
+        <button class="pl-icon-btn" onclick="openRenamePLModal('${pl.id}')" title="Rename">✎</button>
+        ${playlists.length > 1
+          ? `<button class="pl-icon-btn del" onclick="confirmDeletePlaylist('${pl.id}')" title="Delete">✕</button>`
+          : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function switchPlaylist(id) {
+  if (id === activePLId) { closePlDropdown(); return; }
+  activePLId = id;
+  currentIndex = -1;
+  localStorage.setItem(KEY_ACTIVE_PL, activePLId);
+  closePlDropdown();
+  resetPlayerUI(); // FIX: was 4 lines of repeated code
+  chapters = [];
+  document.getElementById('timestampsList').innerHTML = `<div class="ts-state"><div class="ts-state-icon">📍</div><p>Timestamps appear here<br>when a video is loaded.</p></div>`;
+  document.getElementById('tsVideoLabel').textContent = 'No video playing';
+  document.getElementById('tabTsCount').style.opacity = '0';
+  updatePlBar();
+  renderPlaylist();
+  updateProgress();
+  updateStats();
+}
+
+function openNewPlaylistModal() {
+  closePlDropdown();
+  document.getElementById('newPlInput').value = '';
+  document.getElementById('newPlModal').classList.add('open');
+  setTimeout(() => document.getElementById('newPlInput').focus(), 100);
+}
+function closeNewPlModal() { document.getElementById('newPlModal').classList.remove('open'); }
+function confirmNewPlaylist() {
+  const name = document.getElementById('newPlInput').value.trim();
+  if (!name) return;
+  const pl = { id: uid(), name, videos: [] };
+  playlists.push(pl);
+  savePersist();
+  closeNewPlModal();
+  switchPlaylist(pl.id);
+  showToast(`✓ Created "${name}"`, 'success');
+}
+
+function openRenamePLModal(id) {
+  closePlDropdown();
+  renamingPLId = id;
+  const pl = playlists.find(p => p.id === id);
+  document.getElementById('renamePlInput').value = pl ? pl.name : '';
+  document.getElementById('renamePlModal').classList.add('open');
+  setTimeout(() => document.getElementById('renamePlInput').focus(), 100);
+}
+function closeRenamePlModal() { document.getElementById('renamePlModal').classList.remove('open'); renamingPLId = null; }
+function confirmRenamePlaylist() {
+  const name = document.getElementById('renamePlInput').value.trim();
+  if (!name || !renamingPLId) return;
+  const pl = playlists.find(p => p.id === renamingPLId);
+  if (pl) pl.name = name;
+  savePersist();
+  closeRenamePlModal();
+  updatePlBar();
+  showToast('✓ Renamed', 'success');
+}
+
+// FIX: replaced window.confirm() with custom dark-themed modal
+function confirmDeletePlaylist(id) {
+  if (playlists.length <= 1) return;
+  const pl = playlists.find(p => p.id === id);
+  closePlDropdown();
+  showConfirm('🗑 Delete Playlist', `Delete "${pl?.name}"? This cannot be undone.`, 'Delete', () => {
+    playlists = playlists.filter(p => p.id !== id);
+    savePersist();
+    if (activePLId === id) switchPlaylist(playlists[0].id);
+    else renderPlDropdown();
+    showToast('✓ Playlist deleted', 'success');
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// VIDEO ID EXTRACTION
+// ══════════════════════════════════════════════════════════════════════════════
+function extractVideoId(input) {
+  input = input.trim();
+  const patterns = [
+    /[?&]v=([A-Za-z0-9_-]{11})/,
+    /youtu\.be\/([A-Za-z0-9_-]{11})/,
+    /youtube\.com\/shorts\/([A-Za-z0-9_-]{11})/,
+    /youtube\.com\/live\/([A-Za-z0-9_-]{11})/,
+    /youtube(?:-nocookie)?\.com\/(?:embed|v)\/([A-Za-z0-9_-]{11})/,
+    /^([A-Za-z0-9_-]{11})$/
+  ];
+  for (const p of patterns) { const m = input.match(p); if (m) return m[1]; }
+  return null;
+}
+
+// FIX: was /PL[A-Za-z0-9_-]+/ — only matched PL... IDs.
+// Now matches all YouTube playlist types: PL, UU, LL, FL, RD, OL, etc.
+function extractPlaylistId(input) {
+  const m = input.match(/[?&]list=([A-Za-z0-9_-]+)/);
+  return m ? m[1] : null;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ADD / IMPORT
+// ══════════════════════════════════════════════════════════════════════════════
+async function handleAdd() {
+  const input = document.getElementById('urlInput');
+  const val = input.value.trim();
+  if (!val) return;
+
+  const plId = extractPlaylistId(val);
+  if (plId) {
+    input.value = '';
+    toggleAddRow(false);
+    await importPlaylist(plId);
+    return;
+  }
+
+  const vid = extractVideoId(val);
+  if (!vid) { showToast('⚠ Invalid URL or ID', 'error'); return; }
+
+  const videos = getVideos();
+  if (videos.find(v => v.id === vid)) { showToast('Already in queue', 'error'); return; }
+
+  const video = { id: vid, title: 'Loading…', thumb: `https://img.youtube.com/vi/${vid}/mqdefault.jpg`, watched: false, duration: '', durationSec: 0 };
+  videos.push(video);
+  input.value = '';
+  toggleAddRow(false);
+  renderPlaylist();
+  updateProgress();
+  updateStats();
+  savePersist();
+
+  // Fetch title + duration with proper fallback on any failure
+  try {
+    const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${vid}&key=${YT_API_KEY}`);
+    if (res.ok) {
+      const data = await res.json();
+      const item = data.items?.[0];
+      if (item) {
+        video.title = item.snippet.title;
+        const dur = parseDuration(item.contentDetails?.duration || '');
+        video.duration = dur.formatted;
+        video.durationSec = dur.seconds;
+      } else {
+        video.title = `Video (${vid})`; // FIX: no longer stuck on "Loading…"
+      }
+    } else {
+      video.title = `Video (${vid})`; // FIX: handles quota exceeded / 403 etc.
+    }
+  } catch {
+    video.title = `Video (${vid})`; // FIX: handles network errors
+  }
+
+  savePersist();
+  renderPlaylist();
+  updateStats();
+  showToast('✓ Added to queue', 'success');
+  if (currentIndex === -1) playVideo(0);
+}
+
+// ── Import full playlist ──────────────────────────────────────────────────────
+async function importPlaylist(playlistId) {
+  showImportProgress('Fetching playlist…', 0, 0);
+
+  let videoIds = [];
+  let pageToken = '';
+  let fetched = 0;
+
+  try {
+    do {
+      const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=${playlistId}&maxResults=50&key=${YT_API_KEY}${pageToken ? '&pageToken=' + pageToken : ''}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Playlist not found or private');
+      const data = await res.json();
+      const ids = (data.items || []).map(i => i.contentDetails.videoId).filter(Boolean);
+      videoIds.push(...ids);
+      pageToken = data.nextPageToken || '';
+      fetched += ids.length;
+      updateImportProgress(`Fetching playlist…`, fetched, data.pageInfo?.totalResults || fetched);
+    } while (pageToken && videoIds.length < 200);
+  } catch (err) {
+    hideImportProgress();
+    showToast(`⚠ ${err.message}`, 'error');
+    return;
+  }
+
+  if (!videoIds.length) {
+    hideImportProgress();
+    showToast('Playlist appears empty', 'error');
+    return;
+  }
+
+  const videos = getVideos();
+  const existingIds = new Set(videos.map(v => v.id));
+  videoIds = videoIds.filter(id => !existingIds.has(id));
+
+  if (!videoIds.length) {
+    hideImportProgress();
+    showToast('All videos already in queue', 'error');
+    return;
+  }
+
+  let added = 0;
+  const total = videoIds.length;
+  const chunks = [];
+  for (let i = 0; i < videoIds.length; i += 50) chunks.push(videoIds.slice(i, i + 50));
+
+  for (const chunk of chunks) {
+    try {
+      updateImportProgress(`Adding videos…`, added, total);
+      const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${chunk.join(',')}&key=${YT_API_KEY}`);
+      if (!res.ok) throw new Error('Fetch failed');
+      const data = await res.json();
+      for (const item of (data.items || [])) {
+        const dur = parseDuration(item.contentDetails?.duration || '');
+        videos.push({
+          id: item.id,
+          title: item.snippet.title,
+          thumb: `https://img.youtube.com/vi/${item.id}/mqdefault.jpg`,
+          watched: false,
+          duration: dur.formatted,
+          durationSec: dur.seconds
+        });
+        added++;
+      }
+      savePersist();
+      updateImportProgress(`Adding videos…`, added, total);
+      // FIX: renderPlaylist() removed from inside loop — was re-rendering on every chunk
+    } catch {}
+  }
+
+  // Single render after all chunks complete
+  // Save the source so Refresh can re-fetch new videos later
+  const activePL = getActivePL();
+  if (activePL && !activePL.sourcePlaylistId) {
+    activePL.sourcePlaylistId = playlistId;
+    savePersist();
+  }
+  updateRefreshBtn();
+  renderPlaylist();
+  updateStats();
+  hideImportProgress();
+  showToast(`Imported ${added} video${added !== 1 ? 's' : ''}`, 'success');
+  if (currentIndex === -1 && getVideos().length > 0) playVideo(0);
+}
+
+function showImportProgress(label, current, total) {
+  document.getElementById('importProgress').classList.add('show');
+  updateImportProgress(label, current, total);
+}
+function updateImportProgress(label, current, total) {
+  document.getElementById('importLabel').textContent = label;
+  document.getElementById('importCount').textContent = total ? `${current} / ${total}` : '';
+  document.getElementById('importFill').style.width = total ? `${Math.round(current/total*100)}%` : '0%';
+}
+function hideImportProgress() {
+  document.getElementById('importProgress').classList.remove('show');
+}
+
+// ── Duration parsing ──────────────────────────────────────────────────────────
+function parseDuration(iso) {
+  if (!iso) return { formatted: '', seconds: 0 };
+  const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!m) return { formatted: '', seconds: 0 };
+  const h = parseInt(m[1] || 0), min = parseInt(m[2] || 0), s = parseInt(m[3] || 0);
+  const total = h * 3600 + min * 60 + s;
+  const fmt = h > 0
+    ? `${h}:${String(min).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+    : `${min}:${String(s).padStart(2,'0')}`;
+  return { formatted: fmt, seconds: total };
+}
+
+function formatDuration(seconds) {
+  if (!seconds) return '—';
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}m`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TABS / UI TOGGLES
+// ══════════════════════════════════════════════════════════════════════════════
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel-view').forEach(v => v.classList.remove('active'));
+  const tabId = 'tab' + tab.charAt(0).toUpperCase() + tab.slice(1);
+  const viewId = 'view' + tab.charAt(0).toUpperCase() + tab.slice(1);
+  document.getElementById(tabId).classList.add('active');
+  document.getElementById(viewId).classList.add('active');
+}
+
+function toggleAddRow(forceState) {
+  addRowOpen = forceState !== undefined ? forceState : !addRowOpen;
+  document.getElementById('addRowWrap').classList.toggle('open', addRowOpen);
+  document.getElementById('addTrigger').classList.toggle('open', addRowOpen);
+  document.getElementById('addTrigger').innerHTML = addRowOpen
+    ? '✕'
+    : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add`;
+  if (addRowOpen) {
+    setTimeout(() => document.getElementById('urlInput').focus(), 200);
+    if (activeTab !== 'queue') switchTab('queue');
+    closePlDropdown();
+    if (aiPanelOpen) toggleAiPanel(false);
+  }
+}
+
+// FIX: auto-advance now has a real toggle function wired to the button
+function toggleAutoAdvance() {
+  autoAdvance = !autoAdvance;
+  document.getElementById('autoBtn').classList.toggle('on', autoAdvance);
+  showToast(autoAdvance ? 'Auto-advance on' : 'Auto-advance off', '');
+}
+
+function toggleWatchedFilter() {
+  showUnwatchedOnly = !showUnwatchedOnly;
+  document.getElementById('filterBtn').classList.toggle('active-filter', showUnwatchedOnly);
+  renderPlaylist();
+}
+
+function toggleSearch() {
+  const row = document.getElementById('searchRow');
+  const open = !row.classList.contains('open');
+  row.classList.toggle('open', open);
+  if (open) { setTimeout(() => document.getElementById('searchInput').focus(), 100); }
+  else { document.getElementById('searchInput').value = ''; searchQuery = ''; renderPlaylist(); }
+}
+
+function onSearchInput() {
+  searchQuery = document.getElementById('searchInput').value.trim();
+  renderPlaylist();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PLAY VIDEO
+// ══════════════════════════════════════════════════════════════════════════════
+function playVideo(index) {
+  const videos = getVideos();
+  if (index < 0 || index >= videos.length) return;
+  currentIndex = index;
+  const video = videos[index];
+
+  // ── Resume: check for a saved position for this exact video ──────────────
+  let resumeAt = 0;
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY_RESUME) || 'null');
+    if (saved && saved.plId === activePLId && saved.videoId === video.id) {
+      resumeAt = saved.position || 0;
+    }
+  } catch {}
+
+  document.getElementById('emptyPlayer').style.display = 'none';
+  document.getElementById('ytPlayer').style.display = 'block';
+  document.getElementById('videoInfo').style.display = 'block';
+
+  const loadArgs = resumeAt > 3
+    ? { videoId: video.id, startSeconds: resumeAt }
+    : video.id;
+
+  if (playerReady) {
+    ytPlayer.loadVideoById(loadArgs);
+  } else {
+    const check = setInterval(() => {
+      if (playerReady) { clearInterval(check); ytPlayer.loadVideoById(loadArgs); }
+    }, 200);
+  }
+
+  // Show a resume toast so the user knows the position was restored
+  if (resumeAt > 3) {
+    const mm = Math.floor(resumeAt / 60);
+    const ss = String(Math.floor(resumeAt % 60)).padStart(2, '0');
+    showToast(`▶ Resuming from ${mm}:${ss}`, 'success');
+  }
+
+  // ── Start saving playback position every 5 s ──────────────────────────────
+  clearInterval(saveResumeInterval);
+  saveResumeInterval = setInterval(saveResumeState, 5000);
+
+  document.getElementById('videoTitle').textContent = video.title === 'Loading…' ? `Video ${index + 1}` : video.title;
+  document.getElementById('videoIndex').textContent = `${index + 1} of ${videos.length}`;
+  document.getElementById('videoDurationMeta').textContent = video.duration || '';
+  document.getElementById('watchedStatus').textContent = video.watched ? '✓ Watched' : '';
+  document.getElementById('watchedStatus').style.color = video.watched ? '#6abf6a' : '';
+
+  document.getElementById('prevBtn').disabled = index === 0;
+  document.getElementById('nextBtn').disabled = index === videos.length - 1;
+  document.getElementById('markBtn').disabled = false;
+  document.getElementById('skipBtn').disabled = false;
+  document.getElementById('markBtn').textContent = video.watched ? '↩ Unmark' : '✓ Mark Watched';
+
+  fetchTimestamps(video.id, video.title !== 'Loading…' ? video.title : null);
+  renderPlaylist();
+  updateProgress();
+  refreshNotesPanel();
+}
+
+function playPrev() { if (currentIndex > 0) playVideo(currentIndex - 1); }
+function playNext() { const v = getVideos(); if (currentIndex < v.length - 1) playVideo(currentIndex + 1); }
+function skipVideo() { playNext(); }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// RESUME HELPERS — save / restore playback position across sessions
+// ══════════════════════════════════════════════════════════════════════════════
+function saveResumeState() {
+  if (currentIndex === -1 || !ytPlayer || !playerReady) return;
+  const video = getVideos()[currentIndex];
+  if (!video) return;
+  try {
+    const pos = ytPlayer.getCurrentTime();
+    if (pos > 3) { // ignore the very beginning — not worth resuming from
+      localStorage.setItem(KEY_RESUME, JSON.stringify({
+        plId: activePLId,
+        videoId: video.id,
+        index: currentIndex,
+        position: Math.floor(pos)
+      }));
+    }
+  } catch {}
+}
+
+function clearResumeState() {
+  try { localStorage.removeItem(KEY_RESUME); } catch {}
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// MARK WATCHED
+// ══════════════════════════════════════════════════════════════════════════════
+function markWatched() {
+  if (currentIndex === -1) return;
+  const v = getVideos()[currentIndex];
+  v.watched = !v.watched;
+
+  // FIX: track daily count separately so goal reflects today only, not all-time
+  if (v.watched) {
+    dailyWatchedCount++;
+  } else {
+    dailyWatchedCount = Math.max(0, dailyWatchedCount - 1);
+  }
+  try { localStorage.setItem(KEY_DAILY_WATCHED, dailyWatchedCount); } catch {}
+
+  savePersist();
+  renderPlaylist();
+  updateProgress();
+  updateStats();
+  updateGoalUI();
+  document.getElementById('markBtn').textContent = v.watched ? '↩ Unmark' : '✓ Mark Watched';
+  document.getElementById('watchedStatus').textContent = v.watched ? '✓ Watched' : '';
+  document.getElementById('watchedStatus').style.color = v.watched ? '#6abf6a' : '';
+  if (v.watched) showToast('✓ Marked as watched', 'success');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// RENDER PLAYLIST
+// ══════════════════════════════════════════════════════════════════════════════
+function renderPlaylist() {
+  const el = document.getElementById('playlist');
+  const cnt = document.getElementById('queueCount'); // FIX: element now exists in HTML
+  const tabCnt = document.getElementById('tabQueueCount');
+  const allVideos = getVideos();
+
+  tabCnt.textContent = allVideos.length;
+  cnt.textContent = `${allVideos.length} video${allVideos.length !== 1 ? 's' : ''}`;
+
+  let displayed = allVideos.map((v, i) => ({ ...v, origIndex: i }));
+  if (showUnwatchedOnly) displayed = displayed.filter(v => !v.watched);
+  if (searchQuery) displayed = displayed.filter(v => v.title.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  if (displayed.length === 0) {
+    if (allVideos.length === 0) {
+      el.innerHTML = `<div class="empty-queue"><p>Your queue is empty.<br>Tap + to add a video.</p></div>`;
+    } else {
+      el.innerHTML = `<div class="empty-queue"><p>No videos match<br>your current filter.</p></div>`;
+    }
+    return;
+  }
+
+  el.innerHTML = displayed.map(v => `
+    <div class="queue-item ${v.origIndex === currentIndex ? 'active' : ''} ${v.watched ? 'watched' : ''}"
+         draggable="true" data-orig-index="${v.origIndex}" onclick="playVideo(${v.origIndex})">
+      <div class="item-drag" onclick="event.stopPropagation()" title="Drag to reorder">
+        <svg width="10" height="14" viewBox="0 0 10 14" fill="currentColor">
+          <circle cx="3" cy="2.5" r="1.2"/><circle cx="7" cy="2.5" r="1.2"/>
+          <circle cx="3" cy="7" r="1.2"/><circle cx="7" cy="7" r="1.2"/>
+          <circle cx="3" cy="11.5" r="1.2"/><circle cx="7" cy="11.5" r="1.2"/>
+        </svg>
+      </div>
+      <img class="item-thumb" src="${v.thumb}" alt="" onerror="this.style.background='#2a2a2e'">
+      <div class="item-body">
+        <div class="item-title">${escHtml(v.title)}</div>
+        <div class="item-meta">
+          <span class="item-badge ${v.watched ? 'done-badge' : ''}">${v.watched ? '✓ Watched' : `#${v.origIndex + 1}`}</span>
+          ${v.duration ? `<span class="item-duration">${v.duration}</span>` : ''}
+          ${v.notesUrl ? `<div class="item-note-dot" title="Has notes attached"></div>` : ''}
+        </div>
+      </div>
+      <div class="item-actions">
+        <button class="item-del" onclick="removeVideo(event, ${v.origIndex})">✕</button>
+        <div class="item-num">${v.origIndex + 1}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function removeVideo(e, index) {
+  e.stopPropagation();
+  const videos = getVideos();
+  videos.splice(index, 1);
+  if (currentIndex === index) {
+    currentIndex = -1;
+    if (videos.length > 0) playVideo(Math.min(index, videos.length - 1));
+    else resetPlayerUI(); // FIX: was 4 lines of repeated code
+  } else if (currentIndex > index) {
+    currentIndex--;
+  }
+  savePersist();
+  renderPlaylist();
+  updateProgress();
+  updateStats();
+}
+
+// FIX: replaced window.confirm() with custom dark modal
+function confirmClearAll() {
+  const videos = getVideos();
+  if (!videos.length) return;
+  showConfirm('🗑 Clear Queue', 'Clear this entire queue? This cannot be undone.', 'Clear All', () => {
+    getActivePL().videos = [];
+    currentIndex = -1;
+    chapters = [];
+    resetPlayerUI(); // FIX: was 4 lines of repeated code
+    savePersist();
+    renderPlaylist();
+    updateProgress();
+    updateStats();
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PROGRESS + STATS
+// ══════════════════════════════════════════════════════════════════════════════
+function updateProgress() {
+  const videos = getVideos();
+  const total = videos.length;
+  const done = videos.filter(v => v.watched).length;
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progressText').textContent = `${done} / ${total}`;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressSteps').innerHTML = videos.map((v, i) => `
+    <div class="step-dot ${v.watched ? 'done' : (i === currentIndex ? 'active' : '')}" onclick="playVideo(${i})" title="${escHtml(v.title)}"></div>
+  `).join('');
+}
+
+function updateStats() {
+  const videos = getVideos();
+  const total = videos.length;
+  const watched = videos.filter(v => v.watched).length;
+  const left = total - watched;
+  const pct = total ? Math.round((watched / total) * 100) : 0;
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statWatched').textContent = watched;
+  document.getElementById('statLeft').textContent = left;
+  document.getElementById('statPct').textContent = pct + '%';
+  document.getElementById('statsWatchedLarge').textContent = watched;
+
+  const totalSec = videos.reduce((s, v) => s + (v.durationSec || 0), 0);
+  const watchedSec = videos.filter(v => v.watched).reduce((s, v) => s + (v.durationSec || 0), 0);
+  const remainingSec = totalSec - watchedSec;
+  const hasDurations = videos.some(v => v.durationSec > 0);
+
+  document.getElementById('statsTotalTime').textContent = hasDurations ? formatDuration(totalSec) : '—';
+  document.getElementById('statsRemainingTime').textContent = hasDurations ? formatDuration(remainingSec) : '—';
+
+  const tlEl = document.getElementById('queueTimeLeft');
+  tlEl.textContent = (hasDurations && remainingSec > 0) ? formatDuration(remainingSec) + ' left' : '';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TIMER
+// ══════════════════════════════════════════════════════════════════════════════
+function startTimerInterval() {
+  if (timerInterval) clearInterval(timerInterval); // FIX: prevent stacking duplicate intervals
+  timerInterval = setInterval(() => {              // FIX: store reference so it can be cleared
+    if (ytPlayer && playerReady) {
+      try {
+        if (ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+          sessionSeconds++;
+          try { localStorage.setItem(KEY_SESSION, sessionSeconds); } catch {} // FIX: try-catch
+          updateTimer();
+        }
+      } catch {}
+    }
+  }, 1000);
+}
+function updateTimer() {
+  const m = Math.floor(sessionSeconds / 60).toString().padStart(2, '0');
+  const s = (sessionSeconds % 60).toString().padStart(2, '0');
+  const str = `${m}:${s}`;
+  document.getElementById('watchTimer').textContent = str;
+  document.getElementById('statsTimerLarge').textContent = str;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// GOAL
+// ══════════════════════════════════════════════════════════════════════════════
+function openGoalModal() {
+  document.getElementById('goalInput').value = dailyGoal || '';
+  document.getElementById('goalModal').classList.add('open');
+  setTimeout(() => document.getElementById('goalInput').focus(), 100);
+}
+function closeGoalModal() { document.getElementById('goalModal').classList.remove('open'); }
+function saveGoal() {
+  const val = parseInt(document.getElementById('goalInput').value);
+  if (!val || val < 1) return;
+  dailyGoal = val;
+  try { localStorage.setItem(KEY_GOAL, dailyGoal); } catch {} // FIX: try-catch
+  updateGoalUI();
+  closeGoalModal();
+  showToast(`Goal set: ${dailyGoal} videos`, 'success');
+}
+function updateGoalUI() {
+  const goalStatus  = document.getElementById('goalStatus');
+  const goalBtn     = document.getElementById('goalBtn');
+  const goalDisplay = document.getElementById('goalDisplay');
+  const goalBarFill = document.getElementById('goalBarFill');
+
+  if (!dailyGoal) {
+    goalStatus.style.display = 'none';
+    goalDisplay.textContent = 'No goal set.';
+    goalBarFill.style.width = '0%';
+    goalBtn.textContent = 'Set Goal';
+    goalBtn.className = 'goal-badge';
+    return;
+  }
+
+  // FIX: was getVideos().filter(v => v.watched).length — counted ALL-TIME watched.
+  // Now uses dailyWatchedCount which resets every day (same key pattern as session timer).
+  goalStatus.style.display = 'flex';
+  document.getElementById('goalProgress').textContent = `${dailyWatchedCount}/${dailyGoal}`;
+  const met = dailyWatchedCount >= dailyGoal;
+  goalBtn.textContent = met ? 'Goal Met' : `Goal: ${dailyGoal}`;
+  goalBtn.className = 'goal-badge' + (met ? ' goal-met' : '');
+  goalDisplay.innerHTML = met
+    ? `<span style="color:#4a9a4a">${dailyWatchedCount} / ${dailyGoal} — goal reached</span>`
+    : `<span style="color:var(--text)">${dailyWatchedCount} / ${dailyGoal}</span> <span style="color:var(--muted)"> videos watched today</span>`;
+  const pct = Math.min(100, Math.round((dailyWatchedCount / dailyGoal) * 100));
+  goalBarFill.style.width = pct + '%';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PERSIST — FIX: wrapped in try-catch for private/incognito/full-storage safety
+// ══════════════════════════════════════════════════════════════════════════════
+function savePersist() {
+  try {
+    localStorage.setItem(KEY_PLAYLISTS, JSON.stringify(playlists));
+    localStorage.setItem(KEY_ACTIVE_PL, activePLId);
+  } catch (e) {
+    showToast('⚠ Could not save (storage full?)', 'error');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════════════════════════
+let toastTimer;
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = 'toast', 2500);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TIMESTAMPS
+// ══════════════════════════════════════════════════════════════════════════════
+async function fetchTimestamps(videoId, videoTitle) {
+  const listEl  = document.getElementById('timestampsList');
+  const labelEl = document.getElementById('tsVideoLabel');
+  const countEl = document.getElementById('tabTsCount');
+
+  chapters = [];
+  countEl.style.opacity = '0';
+  labelEl.innerHTML = videoTitle ? `<span>${escHtml(videoTitle)}</span>` : 'Loading…';
+  listEl.innerHTML = `<div class="ts-loading"><div class="spinner"></div>Fetching timestamps…</div>`;
+
+  try {
+    const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${YT_API_KEY}`);
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const data = await res.json();
+    const item = data.items?.[0];
+    if (!item) throw new Error('Video not found');
+
+    const parsed = parseTimestampsFromText(item.snippet.description || '');
+    if (!parsed.length) {
+      listEl.innerHTML = `<div class="ts-state"><div class="ts-state-icon">🕳</div><p>No timestamps found.</p><span class="ts-sub">Creator hasn't added chapters.</span></div>`;
+      return;
+    }
+    chapters = parsed;
+    countEl.textContent = chapters.length;
+    countEl.style.opacity = '1';
+    renderTimestamps();
+    startChapterTracking();
+  } catch (err) {
+    listEl.innerHTML = `<div class="ts-state"><div class="ts-state-icon">⚠</div><p>Couldn't load timestamps.</p><span class="ts-sub">${escHtml(err.message)}</span></div>`;
+  }
+}
+
+function parseTimestampsFromText(text) {
+  const lines = text.split('\n');
+  const regex = /(\d{0,2}:?\d{1,2}:\d{2}|\d{1,2}:\d{2})/;
+  const parsed = [];
+  for (const line of lines) {
+    const match = line.match(regex);
+    if (!match) continue;
+    const timeStr = match[1];
+    const parts = timeStr.split(':').map(Number);
+    let seconds = 0;
+    if (parts.length === 3) seconds = parts[0]*3600 + parts[1]*60 + parts[2];
+    else seconds = parts[0]*60 + (parts[1]||0);
+    const name = line.replace(match[0], '').trim().replace(/^[-–—•·]\s*/, '').trim();
+    if (name) parsed.push({ time: seconds, label: timeStr, name });
+  }
+  return parsed;
+}
+
+function renderTimestamps() {
+  document.getElementById('timestampsList').innerHTML = chapters.map((c, i) => `
+    <button class="chapter-btn" id="chap-${i}" onclick="seekToChapter(${c.time})">
+      <span class="chapter-time">${c.label}</span>
+      <span class="chapter-name">${escHtml(c.name)}</span>
+    </button>
+  `).join('');
+}
+
+function seekToChapter(sec) {
+  if (!ytPlayer || !playerReady) return;
+  ytPlayer.seekTo(sec, true); ytPlayer.playVideo();
+  highlightCurrentChapter();
+}
+function startChapterTracking() {
+  clearInterval(chapterTrackInterval);
+  chapterTrackInterval = setInterval(() => { if (ytPlayer && playerReady) { try { highlightCurrentChapter(); } catch {} } }, 1000);
+}
+function highlightCurrentChapter() {
+  if (!chapters.length || !ytPlayer || !playerReady) return;
+  let cur = 0; try { cur = ytPlayer.getCurrentTime(); } catch { return; }
+  let activeIdx = -1;
+  for (let i = chapters.length - 1; i >= 0; i--) { if (cur >= chapters[i].time) { activeIdx = i; break; } }
+  document.querySelectorAll('.chapter-btn').forEach((btn, i) => btn.classList.toggle('active', i === activeIdx));
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// NOTES PANEL — per-video Google Drive notes
+// ══════════════════════════════════════════════════════════════════════════════
+let notesPanelOpen = false;
+
+function drivePreviewUrl(raw) {
+  if (!raw) return '';
+  raw = raw.trim();
+  // Already a preview URL — use as-is
+  if (raw.includes('/preview') || raw.includes('pub?embedded=true')) return raw;
+  // Google Docs /edit or /view → pub embed (cleanest for docs)
+  const docMatch = raw.match(/docs\.google\.com\/document\/d\/([^/]+)/);
+  if (docMatch) return `https://docs.google.com/document/d/${docMatch[1]}/pub?embedded=true`;
+  // Google Slides
+  const slidesMatch = raw.match(/docs\.google\.com\/presentation\/d\/([^/]+)/);
+  if (slidesMatch) return `https://docs.google.com/presentation/d/${slidesMatch[1]}/embed`;
+  // Google Sheets
+  const sheetsMatch = raw.match(/docs\.google\.com\/spreadsheets\/d\/([^/]+)/);
+  if (sheetsMatch) return `https://docs.google.com/spreadsheets/d/${sheetsMatch[1]}/htmlview`;
+  // Generic Drive file — use /preview
+  const driveMatch = raw.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+  if (driveMatch) return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+  // Fallback: treat whole URL as embed src
+  return raw;
+}
+
+function refreshNotesPanel() {
+  if (currentIndex === -1) return;
+  const video = getVideos()[currentIndex];
+  if (!video) return;
+
+  const notesUrl = video.notesUrl || '';
+  const shortTitle = video.title.length > 28 ? video.title.slice(0, 26) + '…' : video.title;
+
+  document.getElementById('notesPanelVideoName').textContent = shortTitle;
+  document.getElementById('notesInput').value = notesUrl;
+
+  const clearBtn = document.getElementById('notesClearBtn');
+  const iframe = document.getElementById('notesIframe');
+  const empty  = document.getElementById('notesEmptyState');
+  const btn    = document.getElementById('notesToggleBtn');
+
+  if (notesUrl) {
+    clearBtn.style.display = 'inline-block';
+    iframe.src = drivePreviewUrl(notesUrl);
+    iframe.style.display = 'block';
+    empty.style.display = 'none';
+    btn.classList.add('has-notes');
+    btn.title = 'Notes attached — click to view';
+  } else {
+    clearBtn.style.display = 'none';
+    iframe.src = '';
+    iframe.style.display = 'none';
+    empty.style.display = 'flex';
+    btn.classList.remove('has-notes');
+    btn.title = 'Attach notes for this video';
+  }
+
+  // Keep open/closed state in sync on video switch
+  document.getElementById('notesPanel').classList.toggle('open', notesPanelOpen);
+  btn.classList.toggle('panel-open', notesPanelOpen);
+}
+
+function toggleNotesPanel(forceState) {
+  if (currentIndex === -1) { showToast('Play a video first', 'error'); return; }
+  notesPanelOpen = forceState !== undefined ? forceState : !notesPanelOpen;
+  document.getElementById('notesPanel').classList.toggle('open', notesPanelOpen);
+  document.getElementById('notesToggleBtn').classList.toggle('panel-open', notesPanelOpen);
+  if (notesPanelOpen) setTimeout(() => document.getElementById('notesInput').focus(), 260);
+}
+
+function saveNotesLink() {
+  if (currentIndex === -1) return;
+  const raw = document.getElementById('notesInput').value.trim();
+  const video = getVideos()[currentIndex];
+  if (!video) return;
+
+  if (raw && !raw.startsWith('http')) {
+    showToast('Please paste a full https:// link', 'error');
+    return;
+  }
+
+  video.notesUrl = raw || '';
+  savePersist();
+  refreshNotesPanel();
+  renderPlaylist(); // refresh dot indicator
+  showToast(raw ? '📄 Notes linked!' : 'Notes removed', raw ? 'success' : '');
+}
+
+function clearNotesLink() {
+  if (currentIndex === -1) return;
+  const video = getVideos()[currentIndex];
+  if (!video) return;
+  video.notesUrl = '';
+  document.getElementById('notesInput').value = '';
+  savePersist();
+  refreshNotesPanel();
+  renderPlaylist();
+  showToast('Notes removed', '');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// AI FIND — Groq parses query → YouTube Search → Groq re-ranks
+// ══════════════════════════════════════════════════════════════════════════════
+
+function toggleAiPanel(forceState) {
+  aiPanelOpen = forceState !== undefined ? forceState : !aiPanelOpen;
+  document.getElementById('aiPanelWrap').classList.toggle('open', aiPanelOpen);
+  document.getElementById('aiFindBtn').classList.toggle('open', aiPanelOpen);
+  if (aiPanelOpen) {
+    // pre-fill saved key display
+    const saved = localStorage.getItem(KEY_GROQ_KEY) || '';
+    document.getElementById('groqKeyInput').value = saved;
+    // close add row if open
+    if (addRowOpen) toggleAddRow(false);
+    setTimeout(() => document.getElementById('aiQueryInput').focus(), 240);
+  }
+}
+
+function saveGroqKey() {
+  const key = document.getElementById('groqKeyInput').value.trim();
+  if (!key) return;
+  localStorage.setItem(KEY_GROQ_KEY, key);
+  showToast('Groq key saved', 'success');
+}
+
+function getGroqKey() {
+  return (document.getElementById('groqKeyInput').value.trim()) ||
+         (localStorage.getItem(KEY_GROQ_KEY) || '');
+}
+
+function setAiStatus(msg, show = true) {
+  document.getElementById('aiStatusText').textContent = msg;
+  document.getElementById('aiStatus').classList.toggle('show', show);
+}
+
+async function callGroq(key, messages, temperature = 0.3) {
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      temperature,
+      max_tokens: 600,
+      messages
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `Groq error ${res.status}`);
+  }
+  const data = await res.json();
+  return data.choices[0].message.content.trim();
+}
+
+async function runAiFind() {
+  const key = getGroqKey();
+  if (!key) { showToast('Add your Groq API key first', 'error'); document.getElementById('groqKeyInput').focus(); return; }
+
+  const query = document.getElementById('aiQueryInput').value.trim();
+  if (!query) { showToast('Type what you want to find', 'error'); return; }
+
+  const btn = document.getElementById('aiGoBtn');
+  btn.disabled = true;
+  document.getElementById('aiResults').innerHTML = '';
+  setAiStatus('Parsing your request…');
+
+  try {
+    // ── STEP 1: Groq parses natural language into YouTube search params ──────
+    const today = new Date().toISOString().split('T')[0];
+    const parsePrompt = `You are a YouTube search parameter extractor.
+Today's date: ${today}
+
+User request: "${query}"
+
+Extract search parameters and return ONLY valid JSON (no markdown, no explanation):
+{
+  "searchQuery": "optimized YouTube search string (topic + educational keywords)",
+  "videoDuration": "any|short|medium|long",
+  "publishedAfter": "YYYY-MM-DDT00:00:00Z or empty string",
+  "publishedBefore": "YYYY-MM-DDT00:00:00Z or empty string",
+  "order": "relevance|viewCount|rating",
+  "minMinutes": 0,
+  "maxMinutes": 0,
+  "count": 8
+}
+
+Duration rules:
+- short = under 4 min → "short"
+- medium = 4–20 min → "medium"  
+- long = over 20 min → "long"
+- If user specifies exact minutes, pick closest bracket AND set minMinutes/maxMinutes.
+- If no duration mentioned → "any", minMinutes=0, maxMinutes=0
+
+Recency rules:
+- "this year" / "2025" → publishedAfter = start of this year
+- "last 2 years" → publishedAfter = 2 years ago
+- "recent" / "new" → publishedAfter = 1 year ago
+- "old" / "classic" → publishedBefore = 5 years ago
+- No time → empty strings
+
+Always append "lecture" or "tutorial" or "explained" to searchQuery unless user specified a style.
+count must be 8.`;
+
+    const rawParams = await callGroq(key, [{ role: 'user', content: parsePrompt }]);
+    let params;
+    try {
+      params = JSON.parse(rawParams.replace(/```json|```/g, '').trim());
+    } catch {
+      throw new Error('Could not parse AI response. Try again.');
+    }
+
+    // ── STEP 2: YouTube search with extracted params ──────────────────────────
+    setAiStatus('Searching YouTube…');
+    let ytUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=${params.count || 8}&key=${YT_API_KEY}&q=${encodeURIComponent(params.searchQuery)}`;
+    if (params.videoDuration && params.videoDuration !== 'any') ytUrl += `&videoDuration=${params.videoDuration}`;
+    if (params.publishedAfter)  ytUrl += `&publishedAfter=${params.publishedAfter}`;
+    if (params.publishedBefore) ytUrl += `&publishedBefore=${params.publishedBefore}`;
+    if (params.order)           ytUrl += `&order=${params.order}`;
+
+    const ytRes = await fetch(ytUrl);
+    if (!ytRes.ok) throw new Error('YouTube search failed');
+    const ytData = await ytRes.json();
+
+    if (!ytData.items?.length) {
+      setAiStatus('', false);
+      document.getElementById('aiResults').innerHTML = `<div class="ai-empty">No videos found. Try rephrasing.</div>`;
+      btn.disabled = false;
+      return;
+    }
+
+    // ── STEP 3: Fetch full details (duration, view count) ────────────────────
+    setAiStatus('Fetching video details…');
+    const videoIds = ytData.items.map(i => i.id.videoId).filter(Boolean);
+    const detailRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id=${videoIds.join(',')}&key=${YT_API_KEY}`);
+    if (!detailRes.ok) throw new Error('Could not fetch video details');
+    const detailData = await detailRes.json();
+
+    // Build enriched candidate list
+    let candidates = (detailData.items || []).map(item => {
+      const dur = parseDuration(item.contentDetails?.duration || '');
+      const views = parseInt(item.statistics?.viewCount || '0');
+      return {
+        id: item.id,
+        title: item.snippet.title,
+        channel: item.snippet.channelTitle,
+        thumb: `https://img.youtube.com/vi/${item.id}/mqdefault.jpg`,
+        duration: dur.formatted,
+        durationSec: dur.seconds,
+        durationMin: Math.round(dur.seconds / 60),
+        views,
+        publishedAt: item.snippet.publishedAt?.slice(0, 10) || ''
+      };
+    });
+
+    // Client-side duration filter if exact minutes were specified
+    if (params.minMinutes > 0 || params.maxMinutes > 0) {
+      candidates = candidates.filter(v => {
+        const ok_min = params.minMinutes > 0 ? v.durationMin >= params.minMinutes - 3 : true;
+        const ok_max = params.maxMinutes > 0 ? v.durationMin <= params.maxMinutes + 3 : true;
+        return ok_min && ok_max;
+      });
+      if (!candidates.length) {
+        // relax filter slightly if nothing matches
+        candidates = (detailData.items || []).map(item => {
+          const dur = parseDuration(item.contentDetails?.duration || '');
+          return { id: item.id, title: item.snippet.title, channel: item.snippet.channelTitle, thumb: `https://img.youtube.com/vi/${item.id}/mqdefault.jpg`, duration: dur.formatted, durationSec: dur.seconds, durationMin: Math.round(dur.seconds / 60), views: parseInt(item.statistics?.viewCount || '0'), publishedAt: item.snippet.publishedAt?.slice(0, 10) || '' };
+        });
+      }
+    }
+
+    // ── STEP 4: Groq re-ranks and picks best 5 ───────────────────────────────
+    setAiStatus('AI is picking the best matches…');
+    const candidateSummary = candidates.map((v, i) =>
+      `${i+1}. "${v.title}" by ${v.channel} | ${v.durationMin}min | ${(v.views/1000).toFixed(0)}K views | ${v.publishedAt}`
+    ).join('\n');
+
+    const rankPrompt = `You are an expert educational content curator.
+
+Original user request: "${query}"
+
+YouTube search results:
+${candidateSummary}
+
+Pick the best 5 videos that truly match the user's request. Prefer:
+- Educational quality over clickbait
+- Reputable channels (universities, known educators, official courses)
+- Accurate duration match if user specified time
+- Genuine educational depth
+
+Return ONLY valid JSON array (no markdown):
+[
+  { "index": 1, "reason": "one short sentence why this is ideal" },
+  ...
+]
+
+index refers to the number in the list above. Return exactly 5 items ordered best-first.`;
+
+    const rankRaw = await callGroq(key, [{ role: 'user', content: rankPrompt }], 0.2);
+    let ranked;
+    try {
+      ranked = JSON.parse(rankRaw.replace(/```json|```/g, '').trim());
+    } catch {
+      // fallback: show all candidates unranked
+      ranked = candidates.slice(0, 5).map((_, i) => ({ index: i + 1, reason: 'Matches your search criteria.' }));
+    }
+
+    // ── STEP 5: Render result cards ──────────────────────────────────────────
+    setAiStatus('', false);
+    const resultsEl = document.getElementById('aiResults');
+
+    if (!ranked.length) {
+      resultsEl.innerHTML = `<div class="ai-empty">AI couldn't rank results. Try a different query.</div>`;
+      btn.disabled = false;
+      return;
+    }
+
+    resultsEl.innerHTML = ranked.map((r, pos) => {
+      const v = candidates[r.index - 1];
+      if (!v) return '';
+      const alreadyInQueue = getVideos().some(q => q.id === v.id);
+      return `<div class="ai-result-card ${alreadyInQueue ? 'added' : ''}" id="aicard-${v.id}">
+        <img class="ai-result-thumb" src="${v.thumb}" alt="" onerror="this.style.background='#2a2a2e'">
+        <div class="ai-result-body">
+          <div class="ai-result-title">${escHtml(v.title)}</div>
+          <div class="ai-result-meta">
+            ${pos === 0 ? `<span class="ai-result-badge rank-1">★ Best match</span>` : ''}
+            <span class="ai-result-badge">${v.durationMin}m</span>
+            <span class="ai-result-badge">${escHtml(v.channel)}</span>
+            <span class="ai-result-badge">${(v.views/1000).toFixed(0)}K views</span>
+            <span class="ai-result-badge">${v.publishedAt}</span>
+          </div>
+          <div class="ai-result-reason">"${escHtml(r.reason)}"</div>
+        </div>
+        <button class="ai-result-add ${alreadyInQueue ? 'done' : ''}" id="aiAdd-${v.id}"
+          onclick="addAiVideo('${v.id}','${escHtml(v.title).replace(/'/g,"\\'")}','${v.thumb}','${v.duration}',${v.durationSec})">
+          ${alreadyInQueue ? '✓' : '+ Add'}
+        </button>
+      </div>`;
+    }).join('');
+
+  } catch (err) {
+    setAiStatus('', false);
+    document.getElementById('aiResults').innerHTML = `<div class="ai-empty">⚠ ${escHtml(err.message)}</div>`;
+    showToast('AI Find error — see panel', 'error');
+  }
+
+  btn.disabled = false;
+}
+
+function addAiVideo(id, title, thumb, duration, durationSec) {
+  const videos = getVideos();
+  if (videos.some(v => v.id === id)) { showToast('Already in queue', ''); return; }
+  videos.push({ id, title, thumb, watched: false, duration, durationSec });
+  savePersist();
+  renderPlaylist();
+  updateStats();
+  showToast(`Added: ${title.slice(0, 36)}…`, 'success');
+  // Update button state
+  const btn = document.getElementById(`aiAdd-${id}`);
+  const card = document.getElementById(`aicard-${id}`);
+  if (btn) { btn.textContent = '✓'; btn.classList.add('done'); }
+  if (card) card.classList.add('added');
+  if (currentIndex === -1) playVideo(0);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DRAG & DROP — reorder videos in the playlist
+// Uses event delegation on #playlist so it survives renderPlaylist() re-renders
+// ══════════════════════════════════════════════════════════════════════════════
+function initDragDrop() {
+  const container = document.getElementById('playlist');
+
+  container.addEventListener('dragstart', e => {
+    const item = e.target.closest('.queue-item[draggable]');
+    if (!item) return;
+    dragSrcOrigIndex = parseInt(item.dataset.origIndex);
+    item.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', String(dragSrcOrigIndex));
+  });
+
+  container.addEventListener('dragover', e => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const item = e.target.closest('.queue-item[draggable]');
+    if (!item) return;
+    const destIdx = parseInt(item.dataset.origIndex);
+    if (destIdx === dragSrcOrigIndex) return;
+    container.querySelectorAll('.queue-item.drag-over').forEach(el => el.classList.remove('drag-over'));
+    item.classList.add('drag-over');
+  });
+
+  container.addEventListener('dragleave', e => {
+    const item = e.target.closest('.queue-item[draggable]');
+    // only remove if we're leaving the item entirely (not just a child)
+    if (item && !item.contains(e.relatedTarget)) item.classList.remove('drag-over');
+  });
+
+  container.addEventListener('drop', e => {
+    e.preventDefault();
+    const item = e.target.closest('.queue-item[draggable]');
+    if (!item) return;
+    const destOrigIndex = parseInt(item.dataset.origIndex);
+    if (isNaN(destOrigIndex) || destOrigIndex === dragSrcOrigIndex || dragSrcOrigIndex === -1) return;
+
+    const videos = getVideos();
+    // splice out the dragged video and re-insert at destination
+    const [moved] = videos.splice(dragSrcOrigIndex, 1);
+    videos.splice(destOrigIndex, 0, moved);
+
+    // keep currentIndex pointing at the same video after reorder
+    if (currentIndex === dragSrcOrigIndex) {
+      currentIndex = destOrigIndex;
+    } else if (dragSrcOrigIndex < currentIndex && destOrigIndex >= currentIndex) {
+      currentIndex--;
+    } else if (dragSrcOrigIndex > currentIndex && destOrigIndex <= currentIndex) {
+      currentIndex++;
+    }
+
+    savePersist();
+    renderPlaylist();
+    updateProgress();
+    showToast('↕ Reordered', '');
+  });
+
+  container.addEventListener('dragend', () => {
+    container.querySelectorAll('.queue-item.dragging, .queue-item.drag-over').forEach(el => {
+      el.classList.remove('dragging', 'drag-over');
+    });
+    dragSrcOrigIndex = -1;
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════════════════════
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// KEYBOARD + CLOSE HANDLERS
+// ══════════════════════════════════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'ArrowRight') playNext();
+  if (e.key === 'ArrowLeft') playPrev();
+  if (e.key === 'w' || e.key === 'W') markWatched();
+  if (e.key === '/') { e.preventDefault(); toggleAddRow(); } // FIX: new / shortcut to open add row
+});
+
+document.addEventListener('click', e => {
+  if (plDropdownOpen && !document.getElementById('plBar').contains(e.target)) closePlDropdown();
+});
+
+// FIX: confirmModal added to list
+['goalModal','newPlModal','renamePlModal','confirmModal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+});
+
+// FIX: confirm OK button wired via addEventListener to avoid closure issues with inline onclick
+document.getElementById('confirmOkBtn').addEventListener('click', executeConfirm);
+
+// ── START ─────────────────────────────────────────────────────────────────────
+loadYTAPI();
+init();
+initDragDrop();
+</script>
+</body>
+</html>
