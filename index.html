@@ -573,7 +573,7 @@
   .toast.success { border-color: #1e3e1e; color: #4a9a4a; }
   .toast.error { border-color: rgba(184,48,48,.4); color: #d05050; }
 
-  /* ── NOTES STYLES (moved and updated for tab layout) ── */
+  /* ── NOTES PANEL ── */
   .notes-toggle-btn {
     display: inline-flex; align-items: center; gap: 5px;
     background: none; border: 1px solid var(--border2);
@@ -586,6 +586,14 @@
   .notes-toggle-btn.has-notes { border-color: #4a7a4a; color: #5faa5f; background: rgba(74,122,74,.08); }
   .notes-toggle-btn.panel-open { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
   .notes-toggle-btn svg { flex-shrink: 0; }
+
+  .notes-panel {
+    flex-shrink: 0; border-top: 1px solid var(--border);
+    background: var(--surface); display: flex; flex-direction: column;
+    max-height: 0; overflow: hidden;
+    transition: max-height .28s cubic-bezier(.4,0,.2,1);
+  }
+  .notes-panel.open { max-height: 420px; }
 
   .notes-panel-head {
     display: flex; align-items: center; justify-content: space-between;
@@ -601,6 +609,11 @@
     max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     display: inline-block; vertical-align: middle;
   }
+  .notes-close-btn {
+    background: none; border: none; cursor: pointer; color: var(--muted);
+    font-size: 16px; line-height: 1; padding: 0 2px; transition: color .14s;
+  }
+  .notes-close-btn:hover { color: var(--text); }
 
   .notes-link-row {
     display: flex; align-items: center; gap: 7px;
@@ -676,6 +689,7 @@
 
 <div class="app">
 
+  <!-- ── LEFT: PLAYER ── -->
   <div class="player-side">
     <div class="player-wrap" id="playerWrap">
       <div class="empty-player" id="emptyPlayer">
@@ -720,15 +734,45 @@
       <button class="btn btn-ghost btn-skip" id="skipBtn" onclick="skipVideo()" disabled>Skip</button>
       <button class="btn btn-ghost btn-auto on" id="autoBtn" onclick="toggleAutoAdvance()" title="Toggle auto-advance">Auto</button>
     </div>
+
+    <!-- ── NOTES PANEL ── -->
+    <div class="notes-panel" id="notesPanel">
+      <div class="notes-panel-head">
+        <div class="notes-panel-title">
+          Notes
+          <span id="notesPanelVideoName">—</span>
+        </div>
+        <button class="notes-close-btn" onclick="toggleNotesPanel(false)" title="Close notes">✕</button>
+      </div>
+      <div class="notes-link-row">
+        <input class="notes-input" id="notesInput" type="text"
+          placeholder="Paste Google Drive / Docs link…"
+          onkeydown="if(event.key==='Enter') saveNotesLink()">
+        <button class="notes-save-btn" onclick="saveNotesLink()">Save</button>
+        <button class="notes-clear-btn" id="notesClearBtn" onclick="clearNotesLink()" style="display:none" title="Remove notes link">✕</button>
+      </div>
+      <div class="notes-iframe-wrap" id="notesIframeWrap">
+        <div class="notes-empty-state" id="notesEmptyState">
+          <div class="ne-icon">📄</div>
+          <p>Paste a Google Drive or Google Docs link above<br>and click <strong>Save</strong> to view your notes here.</p>
+          <p style="margin-top:6px;font-size:10px;">Make sure the file is set to<br><code>Anyone with the link can view</code></p>
+        </div>
+        <iframe id="notesIframe" src="" style="display:none;" allow="autoplay" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>
+      </div>
+    </div>
+
   </div>
 
+  <!-- ── RIGHT: QUEUE PANEL ── -->
   <div class="queue-side">
 
+    <!-- PLAYLIST SELECTOR BAR -->
     <div class="pl-bar" id="plBar">
       <button class="pl-current-btn" onclick="togglePlDropdown()">
         <span class="pl-current-name" id="plCurrentName">My Queue</span>
         <span class="pl-arrow" id="plArrow">▼</span>
       </button>
+      <!-- Refresh button — only shown when playlist was imported from YouTube -->
       <button class="pl-refresh-btn" id="refreshBtn" onclick="refreshPlaylist()" title="Sync new videos from YouTube" style="display:none">
         <svg class="refresh-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="23 4 23 10 17 10"/>
@@ -739,6 +783,7 @@
       <div class="pl-dropdown" id="plDropdown"></div>
     </div>
 
+    <!-- TABS -->
     <div class="panel-tabs">
       <button class="panel-tab active" id="tabQueue" onclick="switchTab('queue')">
         Queue <span class="tab-count" id="tabQueueCount">0</span>
@@ -746,10 +791,12 @@
       <button class="panel-tab" id="tabTimestamps" onclick="switchTab('timestamps')">
         Timestamps <span class="tab-count ts-tab-count" id="tabTsCount" style="opacity:0">0</span>
       </button>
+      <!-- Add button — prominent pill, always visible -->
       <button class="add-trigger" id="addTrigger" onclick="toggleAddRow()" title="Add video or playlist (/)">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Add
       </button>
+      <!-- AI Find button -->
       <button class="ai-find-btn" id="aiFindBtn" onclick="toggleAiPanel()" title="Ask AI to find lectures for you">
         <div class="ai-dot"></div>
         AI Find
@@ -757,11 +804,9 @@
       <button class="panel-tab" id="tabStats" onclick="switchTab('stats')">
         Stats
       </button>
-      <button class="panel-tab" id="tabNotes" onclick="switchTab('notes')">
-        Notes
-      </button>
     </div>
 
+    <!-- ADD ROW -->
     <div class="add-row-wrap" id="addRowWrap">
       <div class="add-row">
         <input class="url-input" id="urlInput" type="text"
@@ -771,8 +816,10 @@
       </div>
     </div>
 
+    <!-- ── AI FIND PANEL ── -->
     <div class="ai-panel-wrap" id="aiPanelWrap">
       <div class="ai-panel">
+        <!-- Groq API key -->
         <div class="ai-key-label">Groq API Key</div>
         <div class="ai-key-row">
           <input class="ai-key-input" id="groqKeyInput" type="password"
@@ -780,6 +827,7 @@
             onkeydown="if(event.key==='Enter') saveGroqKey()">
           <button class="ai-key-save-btn" onclick="saveGroqKey()">Save</button>
         </div>
+        <!-- Natural language query -->
         <div class="ai-search-row">
           <input class="ai-input" id="aiQueryInput" type="text"
             placeholder="e.g. 30 min lecture on neural networks from this year…"
@@ -789,21 +837,26 @@
             Find
           </button>
         </div>
+        <!-- Thinking status -->
         <div class="ai-status" id="aiStatus">
           <div class="ai-spinner"></div>
           <span id="aiStatusText">Thinking…</span>
         </div>
+        <!-- Results list -->
         <div class="ai-results" id="aiResults"></div>
       </div>
     </div>
 
+    <!-- ── QUEUE VIEW ── -->
     <div class="panel-view active" id="viewQueue">
       <div class="queue-header-bar">
+        <!-- hidden but kept so JS doesn't crash -->
         <span id="queueCount" style="display:none"></span>
         <span id="queueTimeLeft" style="display:none"></span>
         <div class="queue-header-top">
           <span class="queue-label">Up Next</span>
           <div class="queue-actions">
+            <!-- Eye / Eye-off filter button -->
             <button class="icon-btn" id="filterBtn" onclick="toggleWatchedFilter()" title="Toggle unwatched only">
               <svg class="eye-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -811,12 +864,14 @@
                 <line class="eye-strike" x1="2" y1="2" x2="22" y2="22"/>
               </svg>
             </button>
+            <!-- Search button -->
             <button class="icon-btn" id="searchBtn" onclick="toggleSearch()" title="Search queue">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"/>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
             </button>
+            <!-- Clear button -->
             <button class="clear-btn" onclick="confirmClearAll()" title="Clear all">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="3 6 5 6 21 6"/>
@@ -844,6 +899,7 @@
       </div>
     </div>
 
+    <!-- ── TIMESTAMPS VIEW ── -->
     <div class="panel-view" id="viewTimestamps">
       <div class="timestamps-view">
         <div class="timestamps-header">
@@ -858,6 +914,7 @@
       </div>
     </div>
 
+    <!-- ── STATS VIEW ── -->
     <div class="panel-view" id="viewStats">
       <div class="stats-view-inner">
 
@@ -901,39 +958,17 @@
           <div class="kbd-row"><span>Next video</span><kbd>→</kbd></div>
           <div class="kbd-row"><span>Prev video</span><kbd>←</kbd></div>
           <div class="kbd-row"><span>Mark watched</span><kbd>W</kbd></div>
+          <!-- FIX: new / shortcut documented here -->
           <div class="kbd-row"><span>Add video</span><kbd>/</kbd></div>
         </div>
 
       </div>
     </div>
 
-    <div class="panel-view" id="viewNotes">
-      <div class="notes-panel-head">
-        <div class="notes-panel-title">
-          Notes
-          <span id="notesPanelVideoName">—</span>
-        </div>
-      </div>
-      <div class="notes-link-row">
-        <input class="notes-input" id="notesInput" type="text"
-          placeholder="Paste Google Drive / Docs link…"
-          onkeydown="if(event.key==='Enter') saveNotesLink()">
-        <button class="notes-save-btn" onclick="saveNotesLink()">Save</button>
-        <button class="notes-clear-btn" id="notesClearBtn" onclick="clearNotesLink()" style="display:none" title="Remove notes link">✕</button>
-      </div>
-      <div class="notes-iframe-wrap" id="notesIframeWrap">
-        <div class="notes-empty-state" id="notesEmptyState">
-          <div class="ne-icon">📄</div>
-          <p>Paste a Google Drive or Google Docs link above<br>and click <strong>Save</strong> to view your notes here.</p>
-          <p style="margin-top:6px;font-size:10px;">Make sure the file is set to<br><code>Anyone with the link can view</code></p>
-        </div>
-        <iframe id="notesIframe" src="" style="display:none;" allow="autoplay" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>
-      </div>
-    </div>
-
   </div>
 </div>
 
+<!-- GOAL MODAL -->
 <div class="modal-overlay" id="goalModal">
   <div class="modal">
     <h3>Set Daily Goal</h3>
@@ -946,6 +981,7 @@
   </div>
 </div>
 
+<!-- NEW PLAYLIST MODAL -->
 <div class="modal-overlay" id="newPlModal">
   <div class="modal">
     <h3>New Playlist</h3>
@@ -958,6 +994,7 @@
   </div>
 </div>
 
+<!-- RENAME PLAYLIST MODAL -->
 <div class="modal-overlay" id="renamePlModal">
   <div class="modal">
     <h3>Rename Playlist</h3>
@@ -970,6 +1007,7 @@
   </div>
 </div>
 
+<!-- FIX: custom confirm modal replaces native window.confirm() everywhere -->
 <div class="modal-overlay" id="confirmModal">
   <div class="modal">
     <h3 id="confirmTitle">Are you sure?</h3>
@@ -982,6 +1020,7 @@
   </div>
 </div>
 
+<!-- IMPORT PROGRESS -->
 <div class="import-progress" id="importProgress">
   <div class="import-progress-label">
     <span id="importLabel">Importing playlist…</span>
@@ -990,6 +1029,7 @@
   <div class="import-track"><div class="import-fill" id="importFill" style="width:0%"></div></div>
 </div>
 
+<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1044,8 +1084,8 @@ function init() {
     playlists = [{ id: uid(), name: 'My Queue', videos: [] }];
   }
 
-  activePLId = localStorage.getItem(KEY_ACTIVE_PL) || playlists.id;
-  if (!playlists.find(p => p.id === activePLId)) activePLId = playlists.id;
+  activePLId = localStorage.getItem(KEY_ACTIVE_PL) || playlists[0].id;
+  if (!playlists.find(p => p.id === activePLId)) activePLId = playlists[0].id;
 
   sessionSeconds    = parseInt(localStorage.getItem(KEY_SESSION)        || '0');
   dailyGoal         = parseInt(localStorage.getItem(KEY_GOAL)           || '0');
@@ -1254,7 +1294,7 @@ function confirmDeletePlaylist(id) {
   showConfirm('🗑 Delete Playlist', `Delete "${pl?.name}"? This cannot be undone.`, 'Delete', () => {
     playlists = playlists.filter(p => p.id !== id);
     savePersist();
-    if (activePLId === id) switchPlaylist(playlists.id);
+    if (activePLId === id) switchPlaylist(playlists[0].id);
     else renderPlDropdown();
     showToast('✓ Playlist deleted', 'success');
   });
@@ -1273,7 +1313,7 @@ function extractVideoId(input) {
     /youtube(?:-nocookie)?\.com\/(?:embed|v)\/([A-Za-z0-9_-]{11})/,
     /^([A-Za-z0-9_-]{11})$/
   ];
-  for (const p of patterns) { const m = input.match(p); if (m) return m; }
+  for (const p of patterns) { const m = input.match(p); if (m) return m[1]; }
   return null;
 }
 
@@ -1281,7 +1321,7 @@ function extractVideoId(input) {
 // Now matches all YouTube playlist types: PL, UU, LL, FL, RD, OL, etc.
 function extractPlaylistId(input) {
   const m = input.match(/[?&]list=([A-Za-z0-9_-]+)/);
-  return m ? m : null;
+  return m ? m[1] : null;
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1320,7 +1360,7 @@ async function handleAdd() {
     const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${vid}&key=${YT_API_KEY}`);
     if (res.ok) {
       const data = await res.json();
-      const item = data.items?.;
+      const item = data.items?.[0];
       if (item) {
         video.title = item.snippet.title;
         const dur = parseDuration(item.contentDetails?.duration || '');
@@ -1447,7 +1487,7 @@ function parseDuration(iso) {
   if (!iso) return { formatted: '', seconds: 0 };
   const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
   if (!m) return { formatted: '', seconds: 0 };
-  const h = parseInt(m || 0), min = parseInt(m || 0), s = parseInt(m || 0);
+  const h = parseInt(m[1] || 0), min = parseInt(m[2] || 0), s = parseInt(m[3] || 0);
   const total = h * 3600 + min * 60 + s;
   const fmt = h > 0
     ? `${h}:${String(min).padStart(2,'0')}:${String(s).padStart(2,'0')}`
@@ -1474,10 +1514,6 @@ function switchTab(tab) {
   const viewId = 'view' + tab.charAt(0).toUpperCase() + tab.slice(1);
   document.getElementById(tabId).classList.add('active');
   document.getElementById(viewId).classList.add('active');
-
-  // Keep notes toggle button highlighted if notes tab is active
-  const notesBtn = document.getElementById('notesToggleBtn');
-  if (notesBtn) notesBtn.classList.toggle('panel-open', tab === 'notes');
 }
 
 function toggleAddRow(forceState) {
@@ -1877,7 +1913,7 @@ async function fetchTimestamps(videoId, videoTitle) {
     const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${YT_API_KEY}`);
     if (!res.ok) throw new Error('API error ' + res.status);
     const data = await res.json();
-    const item = data.items?.;
+    const item = data.items?.[0];
     if (!item) throw new Error('Video not found');
 
     const parsed = parseTimestampsFromText(item.snippet.description || '');
@@ -1902,12 +1938,12 @@ function parseTimestampsFromText(text) {
   for (const line of lines) {
     const match = line.match(regex);
     if (!match) continue;
-    const timeStr = match;
+    const timeStr = match[1];
     const parts = timeStr.split(':').map(Number);
     let seconds = 0;
-    if (parts.length === 3) seconds = parts*3600 + parts*60 + parts;
-    else seconds = parts*60 + (parts||0);
-    const name = line.replace(match, '').trim().replace(/^[-–—•·]\s*/, '').trim();
+    if (parts.length === 3) seconds = parts[0]*3600 + parts[1]*60 + parts[2];
+    else seconds = parts[0]*60 + (parts[1]||0);
+    const name = line.replace(match[0], '').trim().replace(/^[-–—•·]\s*/, '').trim();
     if (name) parsed.push({ time: seconds, label: timeStr, name });
   }
   return parsed;
@@ -1940,8 +1976,9 @@ function highlightCurrentChapter() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// NOTES PANEL — per-video Google Drive notes (Moved to Panel Tab logic)
+// NOTES PANEL — per-video Google Drive notes
 // ══════════════════════════════════════════════════════════════════════════════
+let notesPanelOpen = false;
 
 function drivePreviewUrl(raw) {
   if (!raw) return '';
@@ -1950,16 +1987,16 @@ function drivePreviewUrl(raw) {
   if (raw.includes('/preview') || raw.includes('pub?embedded=true')) return raw;
   // Google Docs /edit or /view → pub embed (cleanest for docs)
   const docMatch = raw.match(/docs\.google\.com\/document\/d\/([^/]+)/);
-  if (docMatch) return `https://docs.google.com/document/d/${docMatch}/pub?embedded=true`;
+  if (docMatch) return `https://docs.google.com/document/d/${docMatch[1]}/pub?embedded=true`;
   // Google Slides
   const slidesMatch = raw.match(/docs\.google\.com\/presentation\/d\/([^/]+)/);
-  if (slidesMatch) return `https://docs.google.com/presentation/d/${slidesMatch}/embed`;
+  if (slidesMatch) return `https://docs.google.com/presentation/d/${slidesMatch[1]}/embed`;
   // Google Sheets
   const sheetsMatch = raw.match(/docs\.google\.com\/spreadsheets\/d\/([^/]+)/);
-  if (sheetsMatch) return `https://docs.google.com/spreadsheets/d/${sheetsMatch}/htmlview`;
+  if (sheetsMatch) return `https://docs.google.com/spreadsheets/d/${sheetsMatch[1]}/htmlview`;
   // Generic Drive file — use /preview
   const driveMatch = raw.match(/drive\.google\.com\/file\/d\/([^/]+)/);
-  if (driveMatch) return `https://drive.google.com/file/d/${driveMatch}/preview`;
+  if (driveMatch) return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
   // Fallback: treat whole URL as embed src
   return raw;
 }
@@ -1996,14 +2033,17 @@ function refreshNotesPanel() {
     btn.title = 'Attach notes for this video';
   }
 
-  // Keep button state in sync with the new tab setup
-  btn.classList.toggle('panel-open', activeTab === 'notes');
+  // Keep open/closed state in sync on video switch
+  document.getElementById('notesPanel').classList.toggle('open', notesPanelOpen);
+  btn.classList.toggle('panel-open', notesPanelOpen);
 }
 
-function toggleNotesPanel() {
+function toggleNotesPanel(forceState) {
   if (currentIndex === -1) { showToast('Play a video first', 'error'); return; }
-  switchTab('notes');
-  setTimeout(() => document.getElementById('notesInput').focus(), 100);
+  notesPanelOpen = forceState !== undefined ? forceState : !notesPanelOpen;
+  document.getElementById('notesPanel').classList.toggle('open', notesPanelOpen);
+  document.getElementById('notesToggleBtn').classList.toggle('panel-open', notesPanelOpen);
+  if (notesPanelOpen) setTimeout(() => document.getElementById('notesInput').focus(), 260);
 }
 
 function saveNotesLink() {
@@ -2087,7 +2127,7 @@ async function callGroq(key, messages, temperature = 0.3) {
     throw new Error(err.error?.message || `Groq error ${res.status}`);
   }
   const data = await res.json();
-  return data.choices.message.content.trim();
+  return data.choices[0].message.content.trim();
 }
 
 async function runAiFind() {
@@ -2104,7 +2144,7 @@ async function runAiFind() {
 
   try {
     // ── STEP 1: Groq parses natural language into YouTube search params ──────
-    const today = new Date().toISOString().split('T');
+    const today = new Date().toISOString().split('T')[0];
     const parsePrompt = `You are a YouTube search parameter extractor.
 Today's date: ${today}
 
