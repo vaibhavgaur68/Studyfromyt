@@ -154,21 +154,21 @@
   .pl-inactive-dot { width: 4px; height: 4px; flex-shrink: 0; }
 
   /* ── PANEL TABS ── */
-   /* ── PANEL TABS ── */
   .panel-tabs {
     display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0;
-    padding: 0 12px; position: relative; background: var(--bg);
+    padding: 0; position: relative; background: var(--bg);
     overflow-x: auto; overflow-y: visible;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
   }
-  .panel-tabs::-webkit-scrollbar { display: none; } /* Chrome/Safari */
-
+  .panel-tabs::-webkit-scrollbar { display: none; }
   .panel-tab {
-    padding: 12px 10px; font-size: 10px; font-weight: 700; font-family: 'DM Mono', monospace;
+    flex: 0 0 33.33%; padding: 12px 6px; font-size: 10px; font-weight: 700; font-family: 'DM Mono', monospace;
     color: var(--muted); background: none; border: none; cursor: pointer;
     border-bottom: 1px solid transparent; margin-bottom: -1px;
     transition: color .14s; letter-spacing: .06em; text-transform: uppercase;
+    scroll-snap-align: start; text-align: center; white-space: nowrap;
   }
   .panel-tab:hover { color: var(--text2); }
   .panel-tab.active { color: var(--text); border-bottom-color: var(--text2); }
@@ -177,12 +177,13 @@
     color: var(--muted); margin-left: 3px; vertical-align: middle;
   }
   .add-trigger {
-    margin-left: auto; align-self: center;
+    flex: 0 0 33.33%; align-self: center; justify-content: center;
+    scroll-snap-align: start;
     display: flex; align-items: center; gap: 5px;
     padding: 5px 12px 5px 9px; border-radius: 50px;
     background: var(--accent); color: #080809; border: none;
     font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700;
-    cursor: pointer; transition: background .14s; flex-shrink: 0; letter-spacing: .03em;
+    cursor: pointer; transition: background .14s; letter-spacing: .03em;
     line-height: 1;
   }
   .add-trigger:hover { background: var(--accent2); }
@@ -190,13 +191,15 @@
 
   /* ── AI FIND BUTTON ── */
   .ai-find-btn {
-    align-self: center; display: flex; align-items: center; gap: 5px;
+    flex: 0 0 33.33%; align-self: center; display: flex; align-items: center; gap: 5px;
+    justify-content: center;
     padding: 5px 11px 5px 8px; border-radius: 50px;
     background: transparent; color: var(--text2);
     border: 1px solid var(--border2);
     font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700;
-    cursor: pointer; transition: all .16s; flex-shrink: 0; letter-spacing: .03em;
-    line-height: 1; margin-left: 6px;
+    cursor: pointer; transition: all .16s; letter-spacing: .03em;
+    line-height: 1; margin-left: 0;
+    scroll-snap-align: start;
   }
   .ai-find-btn:hover { border-color: #a78bfa; color: #a78bfa; background: rgba(167,139,250,.07); }
   .ai-find-btn.open { border-color: #a78bfa; color: #a78bfa; background: rgba(167,139,250,.1); }
