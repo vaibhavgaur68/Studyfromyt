@@ -154,10 +154,16 @@
   .pl-inactive-dot { width: 4px; height: 4px; flex-shrink: 0; }
 
   /* ── PANEL TABS ── */
+   /* ── PANEL TABS ── */
   .panel-tabs {
     display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0;
     padding: 0 12px; position: relative; background: var(--bg);
+    overflow-x: auto; overflow-y: visible;
+    scrollbar-width: none; /* Firefox */
+    -webkit-overflow-scrolling: touch;
   }
+  .panel-tabs::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
   .panel-tab {
     padding: 12px 10px; font-size: 10px; font-weight: 700; font-family: 'DM Mono', monospace;
     color: var(--muted); background: none; border: none; cursor: pointer;
